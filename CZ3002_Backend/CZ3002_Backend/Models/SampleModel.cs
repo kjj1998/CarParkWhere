@@ -2,5 +2,5 @@
 
 public class SampleModel
 {
-    public int id;
+    public int Id { get; set; }
 }
