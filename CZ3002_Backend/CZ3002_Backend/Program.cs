@@ -1,9 +1,13 @@
+using CZ3002_Backend.Models;
+using CZ3002_Backend.Repo;
 using CZ3002_Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<ISampleService,SampleService>();
+//builder.Services.AddSingleton<IBaseRepository<SampleUserModel>, BaseRepository<SampleUserModel>>();
+builder.Services.AddScoped<ISampleUserRepository, SampleUserRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
