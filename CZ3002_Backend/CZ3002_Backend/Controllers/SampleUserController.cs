@@ -1,5 +1,8 @@
-﻿using CZ3002_Backend.Models;
+﻿using System.Runtime.InteropServices;
+using System.Text.Json;
+using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
+using CZ3002_Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CZ3002_Backend.Controllers;
@@ -10,11 +13,13 @@ public class SampleUserController : ControllerBase
 {
     private readonly ILogger<SampleUserController> _logger;
     private readonly ISampleUserRepository _sampleUserRepository;
+    private readonly ISampleService _sampleService;
 
-    public SampleUserController(ILogger<SampleUserController> logger, ISampleUserRepository sampleUserRepository)
+    public SampleUserController(ILogger<SampleUserController> logger, ISampleUserRepository sampleUserRepository, ISampleService sampleService)
     {
         _logger = logger;
         _sampleUserRepository = sampleUserRepository;
+        _sampleService = sampleService;
     }
 
     [HttpGet]

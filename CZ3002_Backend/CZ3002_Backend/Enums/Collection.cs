@@ -2,5 +2,6 @@
 
 public enum Collection
 {
-    SampleUsers = 1
+    SampleUsers = 1,
+    HdbCarparks = 2
 }
