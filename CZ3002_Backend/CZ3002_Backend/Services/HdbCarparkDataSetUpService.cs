@@ -7,10 +7,12 @@ namespace CZ3002_Backend.Services;
 public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum>
 {
     private readonly HttpClient _client;
+    private ILogger<HdbCarparkDataSetUpService> _logger;
 
-    public HdbCarparkDataSetUpService()
+    public HdbCarparkDataSetUpService(ILogger<HdbCarparkDataSetUpService> logger)
     {
         _client = new HttpClient();
+        _logger = logger;
     }
 
     public async Task<List<HdbCarParkModel>> SetUp(List<GovLiveCarparkDatum>? carparks)
@@ -18,11 +20,12 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         var hdbCarParks = new List<HdbCarParkModel>();
 
         if (carparks == null) return hdbCarParks;
-        var count = 1;
+        // var count = 1;
         
         foreach (var carpark in carparks)
         {
-            Console.WriteLine($"{count++}. Carpark Id = {carpark.carpark_number}");
+            // Console.WriteLine($"{count++}. Carpark Id = {carpark.carpark_number}");
+            
             if (!hdbCarParks.Exists(x => x.CarparkCode == carpark.carpark_number))
             {
                 var newHdbCarPark = new HdbCarParkModel();
@@ -50,17 +53,7 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
                 }
                 else
                 {
-                    newHdbCarPark.CarparkCode = carpark.carpark_number;
-                    newHdbCarPark.Name = "Not Available";
-                    newHdbCarPark.System = "Not Available";
-                    newHdbCarPark.Coordinates = new LatLong();
-                    newHdbCarPark.ShortTermParking = "Not Available";
-                    newHdbCarPark.FreeParking = "Not Available";
-                    newHdbCarPark.NightParking = "Not Available";
-                    newHdbCarPark.CarParkDecks = 0;
-                    newHdbCarPark.GantryHeight = 0.0f;
-                    newHdbCarPark.CarParkBasement = "Not Available";
-                    newHdbCarPark.Lots = new Lots();
+                    InitializeStaticDataNotAvailableCarparks(ref newHdbCarPark, carpark.carpark_number);
                 }
 
                 hdbCarParks.Add(newHdbCarPark);
@@ -89,7 +82,22 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
 
         return hdbCarParks;
     }
-    
+
+    private static void InitializeStaticDataNotAvailableCarparks(ref HdbCarParkModel newHdbCarPark, string carparkCode)
+    {
+        newHdbCarPark.CarparkCode = carparkCode;
+        newHdbCarPark.Name = "Not Available";
+        newHdbCarPark.System = "Not Available";
+        newHdbCarPark.Coordinates = new LatLong();
+        newHdbCarPark.ShortTermParking = "Not Available";
+        newHdbCarPark.FreeParking = "Not Available";
+        newHdbCarPark.NightParking = "Not Available";
+        newHdbCarPark.CarParkDecks = 0;
+        newHdbCarPark.GantryHeight = 0.0f;
+        newHdbCarPark.CarParkBasement = "Not Available";
+        newHdbCarPark.Lots = new Lots();
+    }
+
     private async Task<LatLong?> ConvertSvy21ToLatLong(double x, double y)
     {
         var requestUri = $"https://developers.onemap.sg/commonapi/convert/3414to4326?X={x}&Y={y}";

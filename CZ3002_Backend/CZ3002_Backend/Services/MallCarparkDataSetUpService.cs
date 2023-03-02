@@ -15,12 +15,11 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
     public async Task<List<MallCarparkModel>> SetUp(List<LtaLiveCarparkValue>? carparks)
     {
         var mallCarParks = new List<MallCarparkModel>();
-
         if (carparks == null) return mallCarParks;
 
         foreach (var carpark in carparks)
         {
-            Console.WriteLine(carpark.Development);
+            // Console.WriteLine(carpark.Development);
             if (!mallCarParks.Exists(x => x.CarparkCode == carpark.CarParkID))
             {
                 var newMallCarPark = new MallCarparkModel();
@@ -36,18 +35,10 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
                     newMallCarPark.WeekDayRate1 = staticRecords[0].weekdays_rate_1;
                     newMallCarPark.WeekDayRate2 = staticRecords[0].weekdays_rate_2;
                     newMallCarPark.Lots = new Lots();
-                    
                 }
                 else
                 {
-                    newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
-                    newMallCarPark.Name = carpark.Development;
-                    newMallCarPark.CarparkCode = carpark.CarParkID;
-                    newMallCarPark.SunPhRate = "Not Available";
-                    newMallCarPark.SatRate = "Not Available";
-                    newMallCarPark.WeekDayRate1 = "Not Available";
-                    newMallCarPark.WeekDayRate2 = "Not Available";
-                    newMallCarPark.Lots = new Lots();
+                    InitializeMallCarparksWithoutStaticData(ref newMallCarPark, carpark);
                 }
                 
                 mallCarParks.Add(newMallCarPark);
@@ -71,9 +62,23 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         return mallCarParks;
     }
 
+    private void InitializeMallCarparksWithoutStaticData(ref MallCarparkModel newMallCarPark, LtaLiveCarparkValue carpark)
+    {
+        newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
+        newMallCarPark.Name = carpark.Development;
+        newMallCarPark.CarparkCode = carpark.CarParkID;
+        newMallCarPark.SunPhRate = "Not Available";
+        newMallCarPark.SatRate = "Not Available";
+        newMallCarPark.WeekDayRate1 = "Not Available";
+        newMallCarPark.WeekDayRate2 = "Not Available";
+        newMallCarPark.Lots = new Lots();
+    }
+
     private async Task<List<GovStaticMallRecord>?> RetrieveStaticRecords(LtaLiveCarparkValue carpark)
     {
         var staticRecords = new List<GovStaticMallRecord>();
+        
+        // Some terms need to be handed separately
         if (carpark.Development == "VivoCity P3" || carpark.Development == "VivoCity P2")
         {
             staticRecords = await GetStaticMallRecord("VivoCity");

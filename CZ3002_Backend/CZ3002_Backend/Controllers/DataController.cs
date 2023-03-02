@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
 using CZ3002_Backend.Services;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace CZ3002_Backend.Controllers;
 
@@ -17,6 +15,8 @@ public class DataController : ControllerBase
     private readonly IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum> _hdbDataSetUpService;
     private IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue> _mallDataSetUpService;
     private IMallCarparkRepository _mallCarparkRepository;
+
+    private int _googleBatchWriteLimit = 500;
 
     public DataController(
         ILogger<DataController> logger, 
@@ -40,7 +40,7 @@ public class DataController : ControllerBase
     public async Task<ActionResult> SetUpHdbStaticData()
     {
         var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>("https://api.data.gov.sg/v1/transport/carpark-availability");
-        // var carparks = liveHdbResults?.items[0].carpark_data.GetRange(0, 10);
+        
         var carparks = liveHdbResults?.items[0].carpark_data;
         var hdbCarParks = await _hdbDataSetUpService.SetUp(carparks);
 
@@ -49,17 +49,17 @@ public class DataController : ControllerBase
 
         while (carparkCount < totalNumOfCarparks)
         {
-            Console.WriteLine("carpark count: " + carparkCount);
+            // Console.WriteLine("carpark count: " + carparkCount);
             List<HdbCarParkModel> partitionedCarparks;
-            if (carparkCount + 500 > totalNumOfCarparks - 1)
+            if (carparkCount + _googleBatchWriteLimit > totalNumOfCarparks - 1)
             {
                 partitionedCarparks = hdbCarParks.GetRange(carparkCount, totalNumOfCarparks - carparkCount);
                 carparkCount += (totalNumOfCarparks - carparkCount);
             }
             else
             {
-                partitionedCarparks = hdbCarParks.GetRange(carparkCount, 500);
-                carparkCount += 500;
+                partitionedCarparks = hdbCarParks.GetRange(carparkCount, _googleBatchWriteLimit);
+                carparkCount += _googleBatchWriteLimit;
             }
             
             await _hdbCarparkRepository.AddMultipleAsync(partitionedCarparks);
