@@ -1,6 +1,8 @@
 using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
 using CZ3002_Backend.Services;
+using Hangfire;
+using Hangfire.MemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHangfire(c => c.UseMemoryStorage() );
+builder.Services.AddHangfireServer();
+JobStorage.Current = new MemoryStorage();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,8 +36,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseHangfireDashboard();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
+RecurringJob.AddOrUpdate<ISampleService>("SampleJobName",x=>x.SampleFunction(),Cron.Hourly);
+
 app.Run();
+
