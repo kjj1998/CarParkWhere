@@ -6,10 +6,13 @@ namespace CZ3002_Backend.Services;
 public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue>
 {
     private readonly HttpClient _client;
+    private const string NotAvailable = "Not Available";
+    private IConfiguration _configuration;
 
-    public MallCarparkDataSetUpService()
+    public MallCarparkDataSetUpService(IConfiguration configuration)
     {
         _client = new HttpClient();
+        _configuration = configuration;
     }
     
     public async Task<List<MallCarparkModel>> SetUp(List<LtaLiveCarparkValue>? carparks)
@@ -67,10 +70,10 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
         newMallCarPark.Name = carpark.Development;
         newMallCarPark.CarparkCode = carpark.CarParkID;
-        newMallCarPark.SunPhRate = "Not Available";
-        newMallCarPark.SatRate = "Not Available";
-        newMallCarPark.WeekDayRate1 = "Not Available";
-        newMallCarPark.WeekDayRate2 = "Not Available";
+        newMallCarPark.SunPhRate = NotAvailable;
+        newMallCarPark.SatRate = NotAvailable;
+        newMallCarPark.WeekDayRate1 = NotAvailable;
+        newMallCarPark.WeekDayRate2 = NotAvailable;
         newMallCarPark.Lots = new Lots();
     }
 
@@ -79,7 +82,7 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         var staticRecords = new List<GovStaticMallRecord>();
         
         // Some terms need to be handed separately
-        if (carpark.Development == "VivoCity P3" || carpark.Development == "VivoCity P2")
+        if (carpark.Development is "VivoCity P3" or "VivoCity P2")
         {
             staticRecords = await GetStaticMallRecord("VivoCity");
         }
@@ -110,8 +113,7 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
 
     private async Task<List<GovStaticMallRecord>?> GetStaticMallRecord(string name)
     {
-        var requestUri =
-            $"https://data.gov.sg/api/action/datastore_search?resource_id=85207289-6ae7-4a56-9066-e6090a3684a5&q={name}";
+        var requestUri = _configuration["GOV_MALL_CARPARK_RATES_API"] + name;
         var response = await _client.GetFromJsonAsync<GovStaticMallRoot>(requestUri);
 
         return response?.result.records;
@@ -128,54 +130,5 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         };
 
         return coordinate;
-    }
-    
-    private bool IsApproximatelyEqual(string s1, string s2, int maxDistance)
-    {
-        if (s1 == s2)
-        {
-            return true;
-        }
-
-        int s1Len = s1.Length;
-        int s2Len = s2.Length;
-        if (s1Len == 0 || s2Len == 0)
-        {
-            return false;
-        }
-
-        int[,] d = new int[s1Len + 1, s2Len + 1];
-
-        for (int i = 0; i <= s1Len; i++)
-        {
-            d[i, 0] = i;
-        }
-
-        for (int i = 0; i <= s2Len; i++)
-        {
-            d[0, i] = i;
-        }
-
-        for (int j = 1; j <= s2Len; j++)
-        {
-            for (int i = 1; i <= s1Len; i++)
-            {
-                if (s1[i - 1] == s2[j - 1])
-                {
-                    d[i, j] = d[i - 1, j - 1];
-                }
-                else
-                {
-                    d[i, j] = Math.Min(Math.Min(
-                            d[i - 1, j] + 1, // Deletion
-                            d[i, j - 1] + 1), // Insertion
-                        d[i - 1, j - 1] + 1); // Substitution
-                }
-            }
-        }
-
-        var dist = d[s1Len, s2Len];
-        
-        return dist <= maxDistance;
     }
 }

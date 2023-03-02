@@ -6,6 +6,8 @@ using Hangfire.MemoryStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Development.json");
+
 // Add services to the container.
 builder.Services.AddScoped<ISampleService,SampleService>();
 //builder.Services.AddSingleton<IBaseRepository<SampleUserModel>, BaseRepository<SampleUserModel>>();

@@ -17,14 +17,17 @@ public class DataController : ControllerBase
     private IMallCarparkRepository _mallCarparkRepository;
 
     private int _googleBatchWriteLimit = 500;
+    private IConfiguration _configuration;
 
     public DataController(
-        ILogger<DataController> logger, 
+        ILogger<DataController> logger,
+        IConfiguration configuration,
         IHdbCarparkRepository hdbCarparkRepository,
         IMallCarparkRepository mallCarparkRepository,
         IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum> hdbDataSetUpService,
         IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue> mallDataSetUpService)
     {
+        _configuration = configuration;
         _logger = logger;
         _client = new HttpClient();
         _hdbCarparkRepository = hdbCarparkRepository;
@@ -39,7 +42,7 @@ public class DataController : ControllerBase
     [Route("SetUpHdbStaticData")]
     public async Task<ActionResult> SetUpHdbStaticData()
     {
-        var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>("https://api.data.gov.sg/v1/transport/carpark-availability");
+        var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>(_configuration["GOV_CARPARK_AVAILABILITY_API"]);
         
         var carparks = liveHdbResults?.items[0].carpark_data;
         var hdbCarParks = await _hdbDataSetUpService.SetUp(carparks);
@@ -72,8 +75,8 @@ public class DataController : ControllerBase
     [Route("SetUpMallStaticData")]
     public async Task<ActionResult> SetUpMallStaticData()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, "http://datamall2.mytransport.sg/ltaodataservice/CarParkAvailabilityv2");
-        request.Headers.Add("AccountKey", "Jo1AjNjWScyiOIRfikTYqA==");
+        var request = new HttpRequestMessage(HttpMethod.Get, _configuration["LTA_CARPARK_AVAILABILITY_API"]);
+        request.Headers.Add("AccountKey", _configuration["LTA_ACCOUNT_KEY"]);
         request.Headers.Add("accept", "application/json");
 
         var response = await _client.SendAsync(request);
