@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using CZ3002_Backend.Models;
 
 namespace CZ3002_Backend.Services;
@@ -17,15 +18,20 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         var hdbCarParks = new List<HdbCarParkModel>();
 
         if (carparks == null) return hdbCarParks;
+        var count = 1;
         
         foreach (var carpark in carparks)
         {
+            Console.WriteLine($"{count++}. Carpark Id = {carpark.carpark_number}");
             if (!hdbCarParks.Exists(x => x.CarparkCode == carpark.carpark_number))
             {
                 var newHdbCarPark = new HdbCarParkModel();
-                var staticRecord = await GetStaticHdbCarParkRecord(carpark.carpark_number);
-                if (staticRecord != null && staticRecord.car_park_no == carpark.carpark_number)
+                var staticRecords = await GetStaticHdbCarParkRecord(carpark.carpark_number);
+
+                if (staticRecords.Count > 0 && staticRecords[0]?.car_park_no == carpark.carpark_number)
                 {
+                    var staticRecord = staticRecords[0];
+                    Debug.Assert(staticRecord?.x_coord != null, "staticRecord?.x_coord != null");
                     var latLong = await ConvertSvy21ToLatLong(
                         double.Parse(staticRecord.x_coord, CultureInfo.InvariantCulture),
                         double.Parse(staticRecord.y_coord, CultureInfo.InvariantCulture));
@@ -40,6 +46,20 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
                     newHdbCarPark.CarParkDecks = int.Parse(staticRecord.car_park_decks, CultureInfo.InvariantCulture);
                     newHdbCarPark.GantryHeight = float.Parse(staticRecord.gantry_height, CultureInfo.InvariantCulture);
                     newHdbCarPark.CarParkBasement = staticRecord.car_park_basement;
+                    newHdbCarPark.Lots = new Lots();
+                }
+                else
+                {
+                    newHdbCarPark.CarparkCode = carpark.carpark_number;
+                    newHdbCarPark.Name = "Not Available";
+                    newHdbCarPark.System = "Not Available";
+                    newHdbCarPark.Coordinates = new LatLong();
+                    newHdbCarPark.ShortTermParking = "Not Available";
+                    newHdbCarPark.FreeParking = "Not Available";
+                    newHdbCarPark.NightParking = "Not Available";
+                    newHdbCarPark.CarParkDecks = 0;
+                    newHdbCarPark.GantryHeight = 0.0f;
+                    newHdbCarPark.CarParkBasement = "Not Available";
                     newHdbCarPark.Lots = new Lots();
                 }
 
@@ -78,12 +98,12 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         return latLong;
     }
 
-    private async Task<GovStaticRecord?> GetStaticHdbCarParkRecord(string Id)
+    private async Task<List<GovStaticRecord?>> GetStaticHdbCarParkRecord(string Id)
     {
         var requestUri =
             $"https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c&q={Id}";
         var result = await _client.GetFromJsonAsync<GovStaticRoot>(requestUri);
 
-        return result?.result.records[0];
+        return result?.result.records;
     }
 }

@@ -5,7 +5,6 @@ namespace CZ3002_Backend.Models;
 [FirestoreData]
 public class HdbCarParkModel : IBaseFirestoreDataModel
 {
-    
     public string Id { get; set; }
     
     [FirestoreProperty]
@@ -103,7 +102,7 @@ public class GovStaticResult
     public string resource_id { get; set; }
     public List<GovStaticField> fields { get; set; }
     public string q { get; set; }
-    public List<GovStaticRecord> records { get; set; }
+    public List<GovStaticRecord?> records { get; set; }
     public GovStaticLinks GovStaticLinks { get; set; }
     public int total { get; set; }
 }
