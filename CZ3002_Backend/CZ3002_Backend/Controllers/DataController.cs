@@ -104,9 +104,9 @@ public class DataController : ControllerBase
     public async Task<ActionResult> SetUpUraStaticData()
     {
         var token = await GetUraToken(); 
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability"); 
-        request.Headers.Add("AccessKey", "cf15fba1-2816-4512-9f62-2a8634dc2494"); 
-        request.Headers.Add("Token", "f79+gW9-Qfer48cfJ5-n1WXt2gXT-pFaWg55dcA8Cmaa-FVp6QE2zG3T1f6Wfv24uSe57XKD38T6398APaac+9A17d89X-422wqJ"); 
+        var request = new HttpRequestMessage(HttpMethod.Get, _configuration["URA_CARPARK_AVAILABILITY_API"]); 
+        request.Headers.Add("AccessKey", _configuration["CarParkWhere:UraAccessKey"]); 
+        request.Headers.Add("Token", token); 
         request.Headers.Add("User-Agent", "Mozilla/5.0");
         
         var response = await _client.SendAsync(request);

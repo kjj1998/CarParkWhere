@@ -21,7 +21,7 @@ public class UraCarparkDataSetUpService : IDataSetUpService<UraCarparkModel, Ura
         if (carparks == null)
             return uraCarParks;
         
-        var count = 1;
+        // var count = 1;
         var token = await GetUraToken();
         var staticRecords = await GetStaticUraCarParkRecords(token);
 
