@@ -152,6 +152,7 @@ public class DataController : ControllerBase
         return results?.Result;
     }
 
+    [HttpGet]
     [Route("GetMallStaticData")]
     public async Task<ActionResult> GetMallStaticData(GeoPoint geo)
     {
