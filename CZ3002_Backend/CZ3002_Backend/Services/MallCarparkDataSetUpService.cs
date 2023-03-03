@@ -1,5 +1,8 @@
 ﻿using System.Globalization;
+using CZ3002_Backend.Enums;
 using CZ3002_Backend.Models;
+using Geohash;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Services;
 
@@ -31,6 +34,10 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
                 if (staticRecords != null && staticRecords.Count > 0)
                 {
                     newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
+                    var hasher = new Geohasher();
+                    var hash = hasher.Encode(newMallCarPark.Coordinates.Value.Latitude,
+                        newMallCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
+                    newMallCarPark.GeoHash = hash;
                     newMallCarPark.Name = carpark.Development;
                     newMallCarPark.CarparkCode = carpark.CarParkID;
                     newMallCarPark.SunPhRate = staticRecords[0].sunday_publicholiday_rate;
@@ -68,6 +75,10 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
     private void InitializeMallCarparksWithoutStaticData(ref MallCarparkModel newMallCarPark, LtaLiveCarparkValue carpark)
     {
         newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
+        var hasher = new Geohasher();
+        var hash = hasher.Encode(newMallCarPark.Coordinates.Value.Latitude,
+            newMallCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
+        newMallCarPark.GeoHash = hash;
         newMallCarPark.Name = carpark.Development;
         newMallCarPark.CarparkCode = carpark.CarParkID;
         newMallCarPark.SunPhRate = NotAvailable;
@@ -119,15 +130,11 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         return response?.result.records;
     }
 
-    private LatLong retrieveLatLong(string latLongString)
+    private GeoPoint retrieveLatLong(string latLongString)
     {
         var latLong = latLongString.Split(" ");
         
-        var coordinate = new LatLong
-        {
-            latitude = float.Parse(latLong[0], CultureInfo.InvariantCulture),
-            longitude = float.Parse(latLong[1], CultureInfo.InvariantCulture)
-        };
+        var coordinate = new GeoPoint(float.Parse(latLong[0], CultureInfo.InvariantCulture),float.Parse(latLong[1], CultureInfo.InvariantCulture));
 
         return coordinate;
     }

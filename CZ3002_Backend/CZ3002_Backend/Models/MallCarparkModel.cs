@@ -11,7 +11,9 @@ public class MallCarparkModel : IBaseFirestoreDataModel
     [FirestoreProperty]
     public string CarparkCode { get; set; }
     [FirestoreProperty]
-    public LatLong? Coordinates { get; set; }
+    public GeoPoint? Coordinates { get; set; }
+    [FirestoreProperty]
+    public string? GeoHash { get; set; }
     [FirestoreProperty]
     public string WeekDayRate1 { get; set; }
     [FirestoreProperty]

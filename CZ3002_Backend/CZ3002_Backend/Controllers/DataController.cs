@@ -2,6 +2,7 @@
 using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
 using CZ3002_Backend.Services;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Controllers;
 
@@ -88,5 +89,57 @@ public class DataController : ControllerBase
         await _mallCarparkRepository.AddMultipleAsync(mallCarParks);
 
         return Ok();
+    }
+
+    [HttpGet]
+    [Route("GetMallStaticData")]
+    public async Task<ActionResult> GetMallStaticData(GeoPoint geo)
+    {
+        try
+        {
+            return Ok(await _mallCarparkRepository.GetAllAsync());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest();
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
+    }
+    
+    
+    [HttpGet]
+    [Route("GetMallStaticDataFromCoords")]
+    public async Task<ActionResult> GetMallStaticDataFromCoords(float lat,float lon, int precision)
+    {
+        try
+        {
+            var coords = new GeoPoint(lat,lon);
+            precision = Math.Clamp(precision, 1, 10);
+            return Ok(await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(coords, precision));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
+    }
+    [HttpGet]
+    [Route("GetHdbStaticDataFromCoords")]
+    public async Task<ActionResult> GetHdbStaticDataFromCoords(float lat,float lon, int precision)
+    {
+        try
+        {
+            var coords = new GeoPoint(lat,lon);
+            precision = Math.Clamp(precision, 1, 10);
+            return Ok(await _hdbCarparkRepository.GetAllNearbyHDBCarParkWithCoords(coords, precision));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
     }
 }

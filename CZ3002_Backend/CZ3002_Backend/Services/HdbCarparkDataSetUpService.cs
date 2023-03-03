@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using CZ3002_Backend.Enums;
 using CZ3002_Backend.Models;
+using Geohash;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Services;
 
@@ -48,6 +51,10 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
                         newHdbCarPark.Name = staticRecord.address;
                         newHdbCarPark.System = staticRecord.type_of_parking_system;
                         newHdbCarPark.Coordinates = latLong;
+                        var hasher = new Geohasher();
+                        var hash = hasher.Encode(newHdbCarPark.Coordinates.Value.Latitude,
+                            newHdbCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
+                        newHdbCarPark.GeoHash = hash;
                         newHdbCarPark.ShortTermParking = staticRecord.short_term_parking;
                         newHdbCarPark.FreeParking = staticRecord.free_parking;
                         newHdbCarPark.NightParking = staticRecord.night_parking;
@@ -94,7 +101,7 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         newHdbCarPark.CarparkCode = carparkCode;
         newHdbCarPark.Name = NotAvailable;
         newHdbCarPark.System = NotAvailable;
-        newHdbCarPark.Coordinates = new LatLong();
+        newHdbCarPark.Coordinates = new GeoPoint?();
         newHdbCarPark.ShortTermParking = NotAvailable;
         newHdbCarPark.FreeParking = NotAvailable;
         newHdbCarPark.NightParking = NotAvailable;
@@ -104,10 +111,10 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         newHdbCarPark.Lots = new Lots();
     }
 
-    private async Task<LatLong?> ConvertSvy21ToLatLong(double x, double y)
+    private async Task<GeoPoint?> ConvertSvy21ToLatLong(double x, double y)
     {
         var requestUri = $"https://developers.onemap.sg/commonapi/convert/3414to4326?X={x}&Y={y}";
-        var latLong = await _client.GetFromJsonAsync<LatLong>(requestUri);
+        var latLong = await _client.GetFromJsonAsync<GeoPoint>(requestUri);
 
         return latLong;
     }

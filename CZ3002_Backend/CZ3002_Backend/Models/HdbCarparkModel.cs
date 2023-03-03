@@ -20,7 +20,9 @@ public class HdbCarParkModel : IBaseFirestoreDataModel
     public Lots Lots { get; set; }
     
     [FirestoreProperty]
-    public LatLong? Coordinates { get; set; }
+    public GeoPoint? Coordinates { get; set; }
+    [FirestoreProperty]
+    public string? GeoHash { get; set; }
     
     [FirestoreProperty]
     public string ShortTermParking { get; set; }
