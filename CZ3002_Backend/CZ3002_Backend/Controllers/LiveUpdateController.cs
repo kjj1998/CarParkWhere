@@ -13,10 +13,9 @@ public class LiveUpdateController : ControllerBase
     private readonly HttpClient _client;
     
     private readonly IHdbCarparkRepository _hdbCarparkRepository;
-    private readonly ICarparkRepository _mallCarparkRepository;
+    private readonly IMallCarparkRepository _mallCarparkRepository;
     private readonly IUraCarparkRepository _uraCarparkRepository;
-    
-    private const int GoogleBatchWriteLimit = 500;
+
     private readonly IConfiguration _configuration;
     private readonly IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue> _updateLiveMallCarparkDataService;
 
@@ -24,7 +23,7 @@ public class LiveUpdateController : ControllerBase
         ILogger<DataController> logger,
         IConfiguration configuration,
         IHdbCarparkRepository hdbCarparkRepository,
-        ICarparkRepository mallCarparkRepository,
+        IMallCarparkRepository mallCarparkRepository,
         IUraCarparkRepository uraCarparkRepository,
         IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue> updateLiveMallCarparkDataService)
     {
@@ -43,7 +42,7 @@ public class LiveUpdateController : ControllerBase
     [Route("LiveUpdateMallData")]
     public async Task<ActionResult> LiveUpdateMallData()
     {
-        var mallCarParks = await _mallCarparkRepository.GetAllAsync<MallCarparkModel>();
+        var mallCarParks = await _mallCarparkRepository.GetAllAsync();
         
         var request = new HttpRequestMessage(HttpMethod.Get, _configuration["LTA_CARPARK_AVAILABILITY_API"]);
         request.Headers.Add("AccountKey", _configuration["CarParkWhere:LtaAccountKey"]);

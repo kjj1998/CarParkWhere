@@ -5,10 +5,10 @@ namespace CZ3002_Backend.Services;
 
 public class UpdateLiveMallCarparkDataService : IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue>
 {
-    private readonly ICarparkRepository _mallCarparkRepository;
+    private readonly IMallCarparkRepository _mallCarparkRepository;
     private const int GoogleBatchWriteLimit = 500;
     
-    public UpdateLiveMallCarparkDataService(ICarparkRepository mallCarparkRepository)
+    public UpdateLiveMallCarparkDataService(IMallCarparkRepository mallCarparkRepository)
     {
         _mallCarparkRepository = mallCarparkRepository;
     }

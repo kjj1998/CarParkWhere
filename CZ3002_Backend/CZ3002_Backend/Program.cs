@@ -13,7 +13,7 @@ builder.Services.AddScoped<ISampleService,SampleService>();
 //builder.Services.AddSingleton<IBaseRepository<SampleUserModel>, BaseRepository<SampleUserModel>>();
 builder.Services.AddScoped<ISampleUserRepository, SampleUserRepository>();
 builder.Services.AddScoped<IHdbCarparkRepository, HdbCarparkRepository>();
-builder.Services.AddScoped<ICarparkRepository, MallCarparkRepository>();
+builder.Services.AddScoped<IMallCarparkRepository, MallCarparkRepository>();
 builder.Services.AddScoped<IUraCarparkRepository, UraCarparkRepository>();
 
 // Register services
