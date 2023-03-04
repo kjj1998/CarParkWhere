@@ -13,12 +13,14 @@ builder.Services.AddScoped<ISampleService,SampleService>();
 //builder.Services.AddSingleton<IBaseRepository<SampleUserModel>, BaseRepository<SampleUserModel>>();
 builder.Services.AddScoped<ISampleUserRepository, SampleUserRepository>();
 builder.Services.AddScoped<IHdbCarparkRepository, HdbCarparkRepository>();
-builder.Services.AddScoped<IMallCarparkRepository, MallCarparkRepository>();
+builder.Services.AddScoped<ICarparkRepository, MallCarparkRepository>();
 builder.Services.AddScoped<IUraCarparkRepository, UraCarparkRepository>();
 
+// Register services
 builder.Services.AddScoped<IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum>,HdbCarparkDataSetUpService>();
 builder.Services.AddScoped<IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue>, MallCarparkDataSetUpService>();
 builder.Services.AddScoped<IDataSetUpService<UraCarparkModel, UraLiveResult>, UraCarparkDataSetUpService>();
+builder.Services.AddScoped<IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue>, UpdateLiveMallCarparkDataService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
