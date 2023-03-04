@@ -102,6 +102,7 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
         newHdbCarPark.Name = NotAvailable;
         newHdbCarPark.System = NotAvailable;
         newHdbCarPark.Coordinates = new GeoPoint?();
+        newHdbCarPark.GeoHash = string.Empty;
         newHdbCarPark.ShortTermParking = NotAvailable;
         newHdbCarPark.FreeParking = NotAvailable;
         newHdbCarPark.NightParking = NotAvailable;
@@ -114,11 +115,9 @@ public class HdbCarparkDataSetUpService : IDataSetUpService<HdbCarParkModel, Gov
     private async Task<GeoPoint?> ConvertSvy21ToLatLong(double x, double y)
     {
         var requestUri = $"https://developers.onemap.sg/commonapi/convert/3414to4326?X={x}&Y={y}";
-        var latLong = await _client.GetFromJsonAsync<GeoPoint>(requestUri);
-
+        var latLong = await _client.GetFromJsonAsync<LatLong>(requestUri);
         
-
-        return latLong;
+        return new GeoPoint(latLong.latitude,latLong.longitude);
     }
 
     private async Task<List<GovStaticRecord?>> GetStaticHdbCarParkRecord(string Id)
