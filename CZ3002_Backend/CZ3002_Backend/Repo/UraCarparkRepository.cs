@@ -7,13 +7,18 @@ namespace CZ3002_Backend.Repo;
 
 public class UraCarparkRepository : IUraCarparkRepository
 {
-    private readonly BaseRepository<UraCarparkModel> _repository;
+    public readonly BaseRepository<UraCarparkModel> _repository;
     
     public UraCarparkRepository(IConfiguration configuration)
     {
         _repository = new BaseRepository<UraCarparkModel>(Collection.UraCarparks,configuration);
     }
-    
+
+    public BaseRepository<UraCarparkModel> GetBaseRepository()
+    {
+        return _repository;
+    }
+
     public async Task<List<UraCarparkModel>> GetAllAsync() => await _repository.GetAllAsync<UraCarparkModel>(); 
 
     public async Task<UraCarparkModel> GetAsync(UraCarparkModel entity) => (UraCarparkModel) await _repository.GetAsync(entity);

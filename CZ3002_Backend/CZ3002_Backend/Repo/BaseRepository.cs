@@ -133,6 +133,7 @@ public class BaseRepository<T> : IBaseRepository<T>
                 continue;
             }
             
+            baseFirestoreDataModel.Id = documentSnapshot.Id;
             list.Add(baseFirestoreDataModel);
         }
 
