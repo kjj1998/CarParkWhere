@@ -54,7 +54,7 @@ public class GovLiveCarparkInfo
 {
     public string total_lots { get; set; }
     public string lot_type { get; set; }
-    public string lots_available { get; set; }
+    public string? lots_available { get; set; }
 }
 
 public class GovLiveItem

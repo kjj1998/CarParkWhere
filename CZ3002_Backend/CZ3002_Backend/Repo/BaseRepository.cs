@@ -71,6 +71,7 @@ public class BaseRepository<T> : IBaseRepository<T>
     public async Task<List<T1>> AddMultipleAsync<T1>(List<T1> listOfEntities) where T1 : IBaseFirestoreDataModel
     {
         var batch = _firestoreDb.StartBatch();
+
         foreach (var entity in listOfEntities)
         {
             var docReference = _firestoreDb.Collection(_collection.ToString()).Document();
@@ -81,6 +82,24 @@ public class BaseRepository<T> : IBaseRepository<T>
 
         return listOfEntities;
     }
+
+    public async Task<List<T1>> UpdateMultipleAsync<T1>(List<T1> listOfEntities, List<string> docReferences, string fieldName) where T1 : IBaseFirestoreDataModel
+    {
+        var batch = _firestoreDb.StartBatch();
+
+        var index = 0;
+        foreach (var references in docReferences)
+        {
+            var docReference = _firestoreDb.Collection(_collection.ToString()).Document(references);
+            batch.Update(docReference, fieldName, listOfEntities[index], null);
+            index++;
+        }
+
+        await batch.CommitAsync();
+
+        return listOfEntities;
+    }
+    
     public async Task<T1> UpdateAsync<T1>(T1 entity) where T1 : IBaseFirestoreDataModel
     {
         var documentReference = _firestoreDb.Collection(_collection.ToString()).Document(entity.Id);

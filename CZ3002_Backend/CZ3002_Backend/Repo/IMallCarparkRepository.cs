@@ -11,6 +11,7 @@ public interface IMallCarparkRepository
     Task<MallCarparkModel> AddAsync(MallCarparkModel entity);
     Task<List<MallCarparkModel>> AddMultipleAsync(List<MallCarparkModel> listOfEntities);
     Task<MallCarparkModel> UpdateAsync(MallCarparkModel entity);
+    Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName);
     Task DeleteAsync(MallCarparkModel entity);
     Task<List<MallCarparkModel>> QueryRecordsAsync(Query query);
     Task<List<MallCarparkModel>> GetAllNearbyMallCarParkWithCoords(GeoPoint coordinates, int precision);

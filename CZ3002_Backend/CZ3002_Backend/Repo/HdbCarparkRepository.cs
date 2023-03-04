@@ -28,6 +28,9 @@ public class HdbCarparkRepository : IHdbCarparkRepository
     public async Task<List<HdbCarParkModel>> AddMultipleAsync(List<HdbCarParkModel> listOfEntities) =>
         await _repository.AddMultipleAsync(listOfEntities);
 
+    public async Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName)
+        => await _repository.UpdateMultipleAsync(listOfEntities, docReferences, fieldName);
+
     public async Task<HdbCarParkModel> UpdateAsync(HdbCarParkModel entity) => await _repository.UpdateAsync(entity);
 
     public async Task DeleteAsync(HdbCarParkModel entity) => await _repository.DeleteAsync(entity);
