@@ -33,12 +33,15 @@ public class HdbCarparkRepository : IHdbCarparkRepository
     public async Task<List<HdbCarParkModel>> QueryRecordsAsync(Query query) => await _repository.QueryRecordsAsync<HdbCarParkModel>(query);
     
     // This is specific to HdbCarPark.
-    public async Task<List<HdbCarParkModel>> GetAllNearbyHDBCarParkWithCoords(GeoPoint coordinates, int precision = 6)
+    public async Task<List<HdbCarParkModel>> GetAllNearbyHdbCarParkWithCoords(GeoPoint coordinates, int precision = 6)
     {
         var hasher = new Geohasher();
         var hash = hasher.Encode(coordinates.Latitude,
             coordinates.Longitude,precision);
-        var query = ((BaseRepository<HdbCarParkModel>)_repository)._firestoreDb.Collection(Collection.MallCarparks.ToString()).WhereGreaterThanOrEqualTo(nameof(MallCarparkModel.GeoHash), hash).WhereLessThanOrEqualTo(nameof(MallCarparkModel.GeoHash), hash + "~");
+        var query = ((BaseRepository<HdbCarParkModel>)_repository)._firestoreDb.Collection(
+            Collection.HdbCarparks.ToString()).WhereGreaterThanOrEqualTo(
+            nameof(HdbCarParkModel.GeoHash), hash).WhereLessThanOrEqualTo(
+            nameof(HdbCarParkModel.GeoHash), hash + "~");
         return await this.QueryRecordsAsync(query);
     }
 }

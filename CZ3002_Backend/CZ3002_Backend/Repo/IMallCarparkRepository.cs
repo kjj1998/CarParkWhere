@@ -14,5 +14,5 @@ public interface IMallCarparkRepository
     Task DeleteAsync(MallCarparkModel entity);
     Task<List<MallCarparkModel>> QueryRecordsAsync(Query query);
 
-    Task<List<MallCarparkModel>> GetAllNearbyMallCarParkWithCoords(GeoPoint coordinates, int precision);
+    Task<List<MallCarparkModel>> GetAllNearbyMallCarParkWithCoords(GeoPoint coordinates, int precision = 6);
 }

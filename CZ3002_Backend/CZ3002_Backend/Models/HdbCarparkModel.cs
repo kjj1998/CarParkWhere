@@ -1,10 +1,12 @@
-﻿using Google.Cloud.Firestore;
+﻿using System.Text.Json.Serialization;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Models;
 
 [FirestoreData]
 public class HdbCarParkModel : IBaseFirestoreDataModel
 {
+    [JsonIgnore]
     public string Id { get; set; }
     
     [FirestoreProperty]
@@ -21,6 +23,8 @@ public class HdbCarParkModel : IBaseFirestoreDataModel
     
     [FirestoreProperty]
     public GeoPoint? Coordinates { get; set; }
+    
+    [JsonIgnore]
     [FirestoreProperty]
     public string? GeoHash { get; set; }
     

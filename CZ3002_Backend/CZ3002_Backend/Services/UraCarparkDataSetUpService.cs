@@ -1,5 +1,8 @@
 ﻿using System.Globalization;
+using CZ3002_Backend.Enums;
 using CZ3002_Backend.Models;
+using Geohash;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Services;
 
@@ -52,6 +55,11 @@ public class UraCarparkDataSetUpService : IDataSetUpService<UraCarparkModel, Ura
                             newUraCarPark.Coordinates = latLong;
                             newUraCarPark.Lots = new Lots();
                             newUraCarPark.Rates = new List<CarparkRate>();
+                            
+                            var hasher = new Geohasher();
+                            var hash = hasher.Encode(newUraCarPark.Coordinates.Value.Latitude,
+                                newUraCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
+                            newUraCarPark.GeoHash = hash;
 
                             uraCarParks.Add(newUraCarPark);
                         }
@@ -126,11 +134,11 @@ public class UraCarparkDataSetUpService : IDataSetUpService<UraCarparkModel, Ura
         return results?.Result;
     }
     
-    private async Task<LatLong?> ConvertSvy21ToLatLong(double x, double y)
+    private async Task<GeoPoint?> ConvertSvy21ToLatLong(double x, double y)
     {
         var requestUri = $"https://developers.onemap.sg/commonapi/convert/3414to4326?X={x}&Y={y}";
         var latLong = await _client.GetFromJsonAsync<LatLong>(requestUri);
-
-        return latLong;
+        
+        return new GeoPoint(latLong.latitude,latLong.longitude);
     }
 }

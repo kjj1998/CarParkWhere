@@ -1,4 +1,5 @@
-﻿using Google.Cloud.Firestore;
+﻿using System.Text.Json.Serialization;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Models;
 
@@ -18,7 +19,10 @@ public class Lots : IBaseFirestoreDataModel
     public Availability Motorcycle { get; set; }
     [FirestoreProperty]
     public Availability HeavyVehicle { get; set; }
+    
+    [JsonIgnore]
     public string Id { get; set; }
+    [JsonIgnore]
     public string Name { get; set; }
 }
 
@@ -29,6 +33,9 @@ public class Availability : IBaseFirestoreDataModel
     public int Available { get; set; }
     [FirestoreProperty]
     public int Total { get; set; }
+    
+    [JsonIgnore]
     public string Id { get; set; }
+    [JsonIgnore]
     public string Name { get; set; }
 }

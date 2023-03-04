@@ -193,7 +193,7 @@ public class DataController : ControllerBase
         {
             var coords = new GeoPoint(lat,lon);
             precision = Math.Clamp(precision, 1, 10);
-            return Ok(await _hdbCarparkRepository.GetAllNearbyHDBCarParkWithCoords(coords, precision));
+            return Ok(await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision));
         }
         catch (Exception e)
         {

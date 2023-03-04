@@ -1,5 +1,6 @@
 ﻿using CZ3002_Backend.Enums;
 using CZ3002_Backend.Models;
+using Geohash;
 using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Repo;
@@ -32,4 +33,14 @@ public class UraCarparkRepository : IUraCarparkRepository
     public async Task DeleteAsync(UraCarparkModel entity) => await _repository.DeleteAsync(entity);
 
     public async Task<List<UraCarparkModel>> QueryRecordsAsync(Query query) => await _repository.QueryRecordsAsync<UraCarparkModel>(query);
+    
+    public async Task<List<UraCarparkModel>> GetAllNearbyUraCarParkWithCoords(GeoPoint coordinates, int precision = 6)
+    {
+        //var query = ((BaseRepository<MallCarparkModel>)_repository)._firestoreDb.Collection(Collection.SampleUsers.ToString()).WhereIn(nameof(SampleUserModel.SampleCityModelFrom), cities);
+        var hasher = new Geohasher();
+        var hash = hasher.Encode(coordinates.Latitude,
+            coordinates.Longitude,precision);
+        var query = (_repository)._firestoreDb.Collection(Collection.UraCarparks.ToString()).WhereGreaterThanOrEqualTo(nameof(UraCarparkModel.GeoHash), hash).WhereLessThanOrEqualTo(nameof(UraCarparkModel.GeoHash), hash + "~");
+        return await this.QueryRecordsAsync(query);
+    }
 }

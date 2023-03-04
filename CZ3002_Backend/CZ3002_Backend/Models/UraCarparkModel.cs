@@ -1,10 +1,12 @@
-﻿using Google.Cloud.Firestore;
+﻿using System.Text.Json.Serialization;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Models;
 
 [FirestoreData]
 public class UraCarparkModel : IBaseFirestoreDataModel
 {
+    [JsonIgnore]
     public string Id { get; set; }
     
     [FirestoreProperty]
@@ -14,7 +16,11 @@ public class UraCarparkModel : IBaseFirestoreDataModel
     public string Name { get; set; }
     
     [FirestoreProperty]
-    public LatLong? Coordinates { get; set; }
+    public GeoPoint? Coordinates { get; set; }
+    
+    [JsonIgnore]
+    [FirestoreProperty]
+    public string? GeoHash { get; set; }
     
     [FirestoreProperty]
     public string System { get; set; }
