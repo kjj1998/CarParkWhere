@@ -6,6 +6,7 @@ using Google.Cloud.Firestore;
 
 public interface IHdbCarparkRepository
 {
+    BaseRepository<HdbCarParkModel> GetBaseRepository();
     Task<List<HdbCarParkModel>> GetAllAsync();
     Task<HdbCarParkModel> GetAsync(HdbCarParkModel entity);
     Task<HdbCarParkModel> AddAsync(HdbCarParkModel entity);

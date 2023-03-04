@@ -5,6 +5,7 @@ namespace CZ3002_Backend.Repo;
 
 public interface IMallCarparkRepository
 {
+    BaseRepository<MallCarparkModel> GetBaseRepository();
     Task<List<MallCarparkModel>> GetAllAsync();
     Task<MallCarparkModel> GetAsync(MallCarparkModel entity);
     Task<MallCarparkModel> AddAsync(MallCarparkModel entity);
@@ -12,6 +13,5 @@ public interface IMallCarparkRepository
     Task<MallCarparkModel> UpdateAsync(MallCarparkModel entity);
     Task DeleteAsync(MallCarparkModel entity);
     Task<List<MallCarparkModel>> QueryRecordsAsync(Query query);
-
     Task<List<MallCarparkModel>> GetAllNearbyMallCarParkWithCoords(GeoPoint coordinates, int precision);
 }

@@ -13,7 +13,12 @@ public class HdbCarparkRepository : IHdbCarparkRepository
     {
         _repository = new BaseRepository<HdbCarParkModel>(Collection.HdbCarparks,configuration);
     }
-    
+
+    public BaseRepository<HdbCarParkModel> GetBaseRepository()
+    {
+        return (BaseRepository<HdbCarParkModel>)_repository;
+    }
+
     public async Task<List<HdbCarParkModel>> GetAllAsync() => await _repository.GetAllAsync<HdbCarParkModel>(); 
 
     public async Task<HdbCarParkModel> GetAsync(HdbCarParkModel entity) => (HdbCarParkModel) await _repository.GetAsync(entity);

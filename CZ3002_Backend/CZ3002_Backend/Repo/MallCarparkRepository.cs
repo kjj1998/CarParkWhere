@@ -13,7 +13,12 @@ public class MallCarparkRepository : IMallCarparkRepository
     {
         _repository = new BaseRepository<MallCarparkModel>(Collection.MallCarparks,configuration);
     }
-    
+
+    public BaseRepository<MallCarparkModel> GetBaseRepository()
+    {
+        return _repository;
+    }
+
     public async Task<List<MallCarparkModel>> GetAllAsync() => await _repository.GetAllAsync<MallCarparkModel>(); 
 
     public async Task<MallCarparkModel> GetAsync(MallCarparkModel entity) => (MallCarparkModel) await _repository.GetAsync(entity);

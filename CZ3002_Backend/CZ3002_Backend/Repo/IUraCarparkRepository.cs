@@ -5,6 +5,7 @@ namespace CZ3002_Backend.Repo;
 
 public interface IUraCarparkRepository
 {
+    BaseRepository<UraCarparkModel> GetBaseRepository();
     Task<List<UraCarparkModel>> GetAllAsync();
     Task<UraCarparkModel> GetAsync(UraCarparkModel entity);
     Task<UraCarparkModel> AddAsync(UraCarparkModel entity);
