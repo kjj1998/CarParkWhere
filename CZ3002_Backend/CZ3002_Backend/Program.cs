@@ -24,6 +24,7 @@ builder.Services.AddScoped<IDataSetUpService<UraCarparkModel, UraLiveResult>, Ur
 // Register live data update services
 builder.Services.AddScoped<IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue>, UpdateLiveMallCarparkDataService>();
 builder.Services.AddScoped<IUpdateLiveCarparkDataService<UraCarparkModel, UraLiveResult>, UpdateLiveUraCarparkDataService>();
+builder.Services.AddScoped<IUpdateLiveCarparkDataService<HdbCarParkModel, GovLiveCarparkDatum>, UpdateLiveHdbCarparkDataService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

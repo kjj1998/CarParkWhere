@@ -20,6 +20,7 @@ public class LiveUpdateController : ControllerBase
 
     private readonly IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue> _updateLiveMallCarparkDataService;
     private readonly IUpdateLiveCarparkDataService<UraCarparkModel, UraLiveResult> _updateLiveUraCarparkDataService;
+    private readonly IUpdateLiveCarparkDataService<HdbCarParkModel, GovLiveCarparkDatum> _updateLiveHdbCarparkDataService;
 
     public LiveUpdateController(
         ILogger<DataController> logger,
@@ -28,7 +29,8 @@ public class LiveUpdateController : ControllerBase
         IMallCarparkRepository mallCarparkRepository,
         IUraCarparkRepository uraCarparkRepository,
         IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue> updateLiveMallCarparkDataService,
-        IUpdateLiveCarparkDataService<UraCarparkModel, UraLiveResult> updateLiveUraCarparkDataService)
+        IUpdateLiveCarparkDataService<UraCarparkModel, UraLiveResult> updateLiveUraCarparkDataService,
+        IUpdateLiveCarparkDataService<HdbCarParkModel, GovLiveCarparkDatum> updateLiveHdbCarparkDataService)
     {
         _configuration = configuration;
         _logger = logger;
@@ -40,6 +42,7 @@ public class LiveUpdateController : ControllerBase
 
         _updateLiveMallCarparkDataService = updateLiveMallCarparkDataService;
         _updateLiveUraCarparkDataService = updateLiveUraCarparkDataService;
+        _updateLiveHdbCarparkDataService = updateLiveHdbCarparkDataService;
     }
 
     [HttpGet]
@@ -87,6 +90,23 @@ public class LiveUpdateController : ControllerBase
             await _updateLiveUraCarparkDataService.UpdateData(uraCarParks, uraLiveCarparks);
         }
 
+        return Ok();
+    }
+    
+    [HttpGet]
+    [Route("LiveUpdateHdbData")]
+    public async Task<ActionResult> LiveUpdateHdbData()
+    {
+        var hdbCarParks = await _hdbCarparkRepository.GetAllAsync();
+        
+        var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>(_configuration["GOV_CARPARK_AVAILABILITY_API"]);
+        var liveHdbCarparks = liveHdbResults?.items[0].carpark_data;
+
+        if (liveHdbCarparks != null)
+        {
+            await _updateLiveHdbCarparkDataService.UpdateData(hdbCarParks, liveHdbCarparks);
+        }
+        
         return Ok();
     }
     
