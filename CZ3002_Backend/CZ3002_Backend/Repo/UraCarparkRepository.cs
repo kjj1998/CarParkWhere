@@ -22,6 +22,11 @@ public class UraCarparkRepository : IUraCarparkRepository
     public async Task<List<UraCarparkModel>> AddMultipleAsync(List<UraCarparkModel> listOfEntities) =>
         await _repository.AddMultipleAsync(listOfEntities);
 
+    public async Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName)
+    {
+        return await _repository.UpdateMultipleAsync(listOfEntities, docReferences, fieldName);
+    }
+
     public async Task<UraCarparkModel> UpdateAsync(UraCarparkModel entity) => await _repository.UpdateAsync(entity);
 
     public async Task DeleteAsync(UraCarparkModel entity) => await _repository.DeleteAsync(entity);
