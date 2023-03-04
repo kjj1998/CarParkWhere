@@ -23,6 +23,9 @@ public class MallCarparkRepository : IMallCarparkRepository
     public async Task<List<MallCarparkModel>> AddMultipleAsync(List<MallCarparkModel> listOfEntities) =>
         await _repository.AddMultipleAsync(listOfEntities);
 
+    public async Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName) 
+        => await _repository.UpdateMultipleAsync(listOfEntities, docReferences, fieldName);
+
     public async Task<MallCarparkModel> UpdateAsync(MallCarparkModel entity) => await _repository.UpdateAsync(entity);
 
     public async Task DeleteAsync(MallCarparkModel entity) => await _repository.DeleteAsync(entity);

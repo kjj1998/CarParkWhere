@@ -13,6 +13,9 @@ public interface IBaseRepository<T>
 
     Task<List<T1>> AddMultipleAsync<T1>(List<T1> listOfEntities) where T1 : IBaseFirestoreDataModel;
 
+    Task<List<T1>> UpdateMultipleAsync<T1>(List<T1> listOfEntities, List<string> docReferences, string fieldName)
+        where T1 : IBaseFirestoreDataModel;
+
     Task<T> UpdateAsync<T>(T entity) where T : IBaseFirestoreDataModel;
     
     Task DeleteAsync<T>(T entity) where T : IBaseFirestoreDataModel;

@@ -3,7 +3,6 @@ using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
 using CZ3002_Backend.Services;
 using Google.Cloud.Firestore;
-using RestSharp;
 
 namespace CZ3002_Backend.Controllers;
 
@@ -203,4 +202,6 @@ public class DataController : ControllerBase
         }
         /*GetUserWhereCity(LatLong coordinates)*/
     }
+    
+    
 }
