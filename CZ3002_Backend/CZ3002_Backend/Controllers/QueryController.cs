@@ -1,5 +1,6 @@
 ﻿using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
+using Geohash;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,12 +34,43 @@ public class QueryController : ControllerBase
 
         var nearbyMallCarparks = await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(geoPointOfCurrentLocation);
         var nearbyHdbCarparks = await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(geoPointOfCurrentLocation);
-        var nearbyUraCarparks = new List<UraCarparkModel>();
-        
-        
-        
+        var nearbyUraCarparks = await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(geoPointOfCurrentLocation);
+
         var frontendCarparkModel = new FrontendCarparkModel(nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks);
 
         return frontendCarparkModel;
+    }
+
+    [HttpGet]
+    [Route("GetCarparkDataBasedOnLocationSearchTerm")]
+    public async Task<ActionResult<FrontendCarparkModel>> GetCarparkDataBasedOnLocationSearchTerm(string location)
+    {
+        var oneMapSearchResult = await OneMapLocationSearch(location);
+
+        if (oneMapSearchResult is { found: 0 })
+        {
+            return NotFound("Location searched does not exist in Singapore");
+        }
+
+        var searchedLocationGeoPoint = new GeoPoint(
+            double.Parse(oneMapSearchResult?.results?[0].LATITUDE!),
+            double.Parse(oneMapSearchResult?.results?[0].LONGITUDE!));
+
+        var nearbyMallCarparks = await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(searchedLocationGeoPoint);
+        var nearbyHdbCarparks = await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(searchedLocationGeoPoint);
+        var nearbyUraCarparks = await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(searchedLocationGeoPoint);
+
+        var frontendCarparkModel = new FrontendCarparkModel(nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks);
+
+        return frontendCarparkModel;
+    }
+
+    private async Task<OneMapSearchRootModel?> OneMapLocationSearch(string location)
+    {
+        var oneMapApiUri = "https://developers.onemap.sg/commonapi/search?searchVal=" + location +
+                           "&returnGeom=Y&getAddrDetails=N";
+        var response = await _client.GetFromJsonAsync<OneMapSearchRootModel>(oneMapApiUri);
+
+        return response;
     }
 }
