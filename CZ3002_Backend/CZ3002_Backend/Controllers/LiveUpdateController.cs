@@ -49,65 +49,89 @@ public class LiveUpdateController : ControllerBase
     [Route("LiveUpdateMallData")]
     public async Task<ActionResult> LiveUpdateMallData()
     {
-        var mallCarParks = await _mallCarparkRepository.GetAllAsync();
-
-        var request = new HttpRequestMessage(HttpMethod.Get, _configuration["LTA_CARPARK_AVAILABILITY_API"]);
-        request.Headers.Add("AccountKey", _configuration["CarParkWhere:LtaAccountKey"]);
-        request.Headers.Add("accept", "application/json");
-
-        var response = await _client.SendAsync(request);
-        var results = await response.Content.ReadFromJsonAsync<LtaLiveCarparkRoot>();
-
-        var liveMallCarparks = results?.value.FindAll(x => x.Agency == "LTA");
-
-        if (liveMallCarparks != null)
+        try
         {
-            await _updateLiveMallCarparkDataService.UpdateData(mallCarParks, liveMallCarparks);
-        }
+            var mallCarParks = await _mallCarparkRepository.GetAllAsync();
 
-        return Ok();
+            var request = new HttpRequestMessage(HttpMethod.Get, _configuration["LTA_CARPARK_AVAILABILITY_API"]);
+            request.Headers.Add("AccountKey", _configuration["CarParkWhere:LtaAccountKey"]);
+            request.Headers.Add("accept", "application/json");
+
+            var response = await _client.SendAsync(request);
+            var results = await response.Content.ReadFromJsonAsync<LtaLiveCarparkRoot>();
+
+            var liveMallCarparks = results?.value.FindAll(x => x.Agency == "LTA");
+
+            if (liveMallCarparks != null)
+            {
+                await _updateLiveMallCarparkDataService.UpdateData(mallCarParks, liveMallCarparks);
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
     }
 
     [HttpGet]
     [Route("LiveUpdateUraData")]
     public async Task<ActionResult> LiveUpdateUraData()
     {
-        var uraCarParks = await _uraCarparkRepository.GetAllAsync();
-        
-        var token = await GetUraToken(); 
-        var request = new HttpRequestMessage(HttpMethod.Get, _configuration["URA_CARPARK_AVAILABILITY_API"]); 
-        request.Headers.Add("AccessKey", _configuration["CarParkWhere:UraAccessKey"]); 
-        request.Headers.Add("Token", token); 
-        request.Headers.Add("User-Agent", "Mozilla/5.0");
-        
-        var response = await _client.SendAsync(request);
-        var results = await response.Content.ReadFromJsonAsync<UraLiveRoot>();
-        
-        var uraLiveCarparks = results?.Result;
-
-        if (uraLiveCarparks != null)
+        try
         {
-            await _updateLiveUraCarparkDataService.UpdateData(uraCarParks, uraLiveCarparks);
-        }
+            var uraCarParks = await _uraCarparkRepository.GetAllAsync();
 
-        return Ok();
+            var token = await GetUraToken();
+            var request = new HttpRequestMessage(HttpMethod.Get, _configuration["URA_CARPARK_AVAILABILITY_API"]);
+            request.Headers.Add("AccessKey", _configuration["CarParkWhere:UraAccessKey"]);
+            request.Headers.Add("Token", token);
+            request.Headers.Add("User-Agent", "Mozilla/5.0");
+
+            var response = await _client.SendAsync(request);
+            var results = await response.Content.ReadFromJsonAsync<UraLiveRoot>();
+
+            var uraLiveCarparks = results?.Result;
+
+            if (uraLiveCarparks != null)
+            {
+                await _updateLiveUraCarparkDataService.UpdateData(uraCarParks, uraLiveCarparks);
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
     }
     
     [HttpGet]
     [Route("LiveUpdateHdbData")]
     public async Task<ActionResult> LiveUpdateHdbData()
     {
-        var hdbCarParks = await _hdbCarparkRepository.GetAllAsync();
-        
-        var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>(_configuration["GOV_CARPARK_AVAILABILITY_API"]);
-        var liveHdbCarparks = liveHdbResults?.items[0].carpark_data;
-
-        if (liveHdbCarparks != null)
+        try
         {
-            await _updateLiveHdbCarparkDataService.UpdateData(hdbCarParks, liveHdbCarparks);
-        }
+            var hdbCarParks = await _hdbCarparkRepository.GetAllAsync();
         
-        return Ok();
+            var liveHdbResults = await _client.GetFromJsonAsync<GovLiveRoot>(_configuration["GOV_CARPARK_AVAILABILITY_API"]);
+            var liveHdbCarparks = liveHdbResults?.items[0].carpark_data;
+
+            if (liveHdbCarparks != null)
+            {
+                await _updateLiveHdbCarparkDataService.UpdateData(hdbCarParks, liveHdbCarparks);
+            }
+        
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
     }
     
     private async Task<string?> GetUraToken()
