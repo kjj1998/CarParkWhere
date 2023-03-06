@@ -44,8 +44,8 @@ public class QueryController : ControllerBase
             var nearbyUraCarparks =
                 await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(geoPointOfCurrentLocation);
 
-            var frontendCarparkModel =
-                new FrontendCarparkModel(nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks);
+            var frontendCarparkModel = new FrontendCarparkModel(
+                nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks, currentLocation);
 
             return frontendCarparkModel;
         }
@@ -54,7 +54,6 @@ public class QueryController : ControllerBase
             _logger.LogError(e.ToString());
             return BadRequest(e.ToString());
         }
-        
     }
 
     [HttpGet]
@@ -74,6 +73,12 @@ public class QueryController : ControllerBase
                 double.Parse(oneMapSearchResult?.results?[0].LATITUDE!),
                 double.Parse(oneMapSearchResult?.results?[0].LONGITUDE!));
 
+            var searchedLocation = new LatLong
+            {
+                latitude = double.Parse(oneMapSearchResult?.results?[0].LATITUDE!),
+                longitude = double.Parse(oneMapSearchResult?.results?[0].LONGITUDE!)
+            };
+
             var nearbyMallCarparks =
                 await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(searchedLocationGeoPoint);
             var nearbyHdbCarparks =
@@ -81,8 +86,8 @@ public class QueryController : ControllerBase
             var nearbyUraCarparks =
                 await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(searchedLocationGeoPoint);
 
-            var frontendCarparkModel =
-                new FrontendCarparkModel(nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks);
+            var frontendCarparkModel = new FrontendCarparkModel(
+                nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks, searchedLocation);
 
             return frontendCarparkModel;
         }

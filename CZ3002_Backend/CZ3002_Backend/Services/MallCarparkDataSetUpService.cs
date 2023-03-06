@@ -10,7 +10,7 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
 {
     private readonly HttpClient _client;
     private const string NotAvailable = "Not Available";
-    private IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public MallCarparkDataSetUpService(IConfiguration configuration)
     {
@@ -33,18 +33,7 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
                 
                 if (staticRecords != null && staticRecords.Count > 0)
                 {
-                    newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
-                    var hasher = new Geohasher();
-                    var hash = hasher.Encode(newMallCarPark.Coordinates.Value.Latitude,
-                        newMallCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
-                    newMallCarPark.GeoHash = hash;
-                    newMallCarPark.Name = carpark.Development;
-                    newMallCarPark.CarparkCode = carpark.CarParkID;
-                    newMallCarPark.SunPhRate = staticRecords[0].sunday_publicholiday_rate;
-                    newMallCarPark.SatRate = staticRecords[0].saturday_rate;
-                    newMallCarPark.WeekDayRate1 = staticRecords[0].weekdays_rate_1;
-                    newMallCarPark.WeekDayRate2 = staticRecords[0].weekdays_rate_2;
-                    newMallCarPark.Lots = new Lots();
+                    InitializeMallCarparkWithStaticData(ref newMallCarPark, carpark, staticRecords);
                 }
                 else
                 {
@@ -72,13 +61,31 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         return mallCarParks;
     }
 
+    private void InitializeMallCarparkWithStaticData(ref MallCarparkModel newMallCarPark, LtaLiveCarparkValue carpark, IReadOnlyList<GovStaticMallRecord> staticRecords)
+    {
+        newMallCarPark.Coordinates = RetrieveLatLong(carpark.Location);
+        newMallCarPark.GeoHash = MallCarparkGeoHasher(newMallCarPark.Coordinates.Value.Latitude, newMallCarPark.Coordinates.Value.Longitude);
+        newMallCarPark.Name = carpark.Development;
+        newMallCarPark.CarparkCode = carpark.CarParkID;
+        newMallCarPark.SunPhRate = staticRecords[0].sunday_publicholiday_rate;
+        newMallCarPark.SatRate = staticRecords[0].saturday_rate;
+        newMallCarPark.WeekDayRate1 = staticRecords[0].weekdays_rate_1;
+        newMallCarPark.WeekDayRate2 = staticRecords[0].weekdays_rate_2;
+        newMallCarPark.Lots = new Lots();
+    }
+
+    private static string MallCarparkGeoHasher(double latitude, double longitude)
+    {
+        var hasher = new Geohasher();
+        var hash = hasher.Encode(latitude, longitude,(int)Precision.GeoHash);
+
+        return hash;
+    }
+
     private void InitializeMallCarparksWithoutStaticData(ref MallCarparkModel newMallCarPark, LtaLiveCarparkValue carpark)
     {
-        newMallCarPark.Coordinates = retrieveLatLong(carpark.Location);
-        var hasher = new Geohasher();
-        var hash = hasher.Encode(newMallCarPark.Coordinates.Value.Latitude,
-            newMallCarPark.Coordinates.Value.Longitude,(int)Precision.GeoHash);
-        newMallCarPark.GeoHash = hash;
+        newMallCarPark.Coordinates = RetrieveLatLong(carpark.Location);
+        newMallCarPark.GeoHash = MallCarparkGeoHasher(newMallCarPark.Coordinates.Value.Latitude, newMallCarPark.Coordinates.Value.Longitude);
         newMallCarPark.Name = carpark.Development;
         newMallCarPark.CarparkCode = carpark.CarParkID;
         newMallCarPark.SunPhRate = NotAvailable;
@@ -130,7 +137,7 @@ public class MallCarparkDataSetUpService : IDataSetUpService<MallCarparkModel, L
         return response?.result.records;
     }
 
-    private GeoPoint retrieveLatLong(string latLongString)
+    private GeoPoint RetrieveLatLong(string? latLongString)
     {
         var latLong = latLongString.Split(" ");
         
