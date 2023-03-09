@@ -37,6 +37,11 @@ public class MallCarparkRepository : IMallCarparkRepository
 
     public async Task<List<MallCarparkModel>> QueryRecordsAsync(Query query) => await _repository.QueryRecordsAsync<MallCarparkModel>(query);
     
+    public async Task<long?> GetTotalNumberOfCarparks() => await _repository.GetTotalCountOfDocuments();
+    
+    public async Task<List<MallCarparkModel>?> GetPaginatedCarparks(int documentsToSkip, int pageSize) => 
+        await _repository.QueryPaginatedRecordsAsync<MallCarparkModel>(documentsToSkip, pageSize);
+    
     // This is specific to MallCarParks.
     public async Task<List<MallCarparkModel>> GetAllNearbyMallCarParkWithCoords(GeoPoint coordinates, int precision = 6)
     {

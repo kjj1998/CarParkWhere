@@ -6,7 +6,6 @@ namespace CZ3002_Backend.Models;
 [FirestoreData]
 public class HdbCarParkModel : IBaseFirestoreDataModel
 {
-    [JsonIgnore]
     public string Id { get; set; }
     
     [FirestoreProperty]

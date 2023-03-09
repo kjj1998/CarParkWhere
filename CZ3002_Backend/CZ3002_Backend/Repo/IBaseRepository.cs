@@ -19,6 +19,10 @@ public interface IBaseRepository<T>
     Task<T> UpdateAsync<T>(T entity) where T : IBaseFirestoreDataModel;
     
     Task DeleteAsync<T>(T entity) where T : IBaseFirestoreDataModel;
+
+    Task<long?> GetTotalCountOfDocuments();
+
+    Task<List<T>> QueryPaginatedRecordsAsync<T>(int start, int limit) where T : IBaseFirestoreDataModel;
     
     Task<List<T>> QueryRecordsAsync<T>(Query query) where T : IBaseFirestoreDataModel;
     
