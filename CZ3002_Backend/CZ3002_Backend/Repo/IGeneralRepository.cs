@@ -3,7 +3,7 @@ using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Repo;
 
-public interface IUserRepository
+public interface IGeneralRepository
 {
     Task<List<UserModel>> GetAllAsync();
     Task<UserModel> GetAsync(UserModel entity);
@@ -14,4 +14,5 @@ public interface IUserRepository
     Task<UserModel> GetUserFavouriteCarParks(string user);
     Task UpsertUserFavouriteCarPark(string user, string carParkCode);
     Task DeleteUserFavouriteCarPark(string user, string carParkCode);
+    Task<FrontendSingleCarparkModel> GetSingleCarPark(string carParkCode);
 }

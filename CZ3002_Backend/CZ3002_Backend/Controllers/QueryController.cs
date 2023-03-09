@@ -13,6 +13,7 @@ public class QueryController : ControllerBase
     private IMallCarparkRepository _mallCarparkRepository;
     private IHdbCarparkRepository _hdbCarparkRepository;
     private IUraCarparkRepository _uraCarparkRepository;
+    private readonly IGeneralRepository _generalRepository;
     private readonly HttpClient _client;
     private ILogger<QueryController> _logger;
 
@@ -20,12 +21,14 @@ public class QueryController : ControllerBase
         ILogger<QueryController> logger,
         IMallCarparkRepository mallCarparkRepository, 
         IHdbCarparkRepository hdbCarparkRepository, 
-        IUraCarparkRepository uraCarparkRepository)
+        IUraCarparkRepository uraCarparkRepository,
+        IGeneralRepository generalRepository)
     {
         _logger = logger;
         _mallCarparkRepository = mallCarparkRepository;
         _hdbCarparkRepository = hdbCarparkRepository;
         _uraCarparkRepository = uraCarparkRepository;
+        _generalRepository = generalRepository;
         _client = new HttpClient();
     }
 
@@ -105,5 +108,20 @@ public class QueryController : ControllerBase
         var response = await _client.GetFromJsonAsync<OneMapSearchRootModel>(oneMapApiUri);
 
         return response;
+    }
+
+    [HttpGet]
+    [Route("CarparkInfoFromCode")]
+    public async Task<IActionResult> CarparkInfoFromCode(string carparkCode)
+    {
+        try
+        {
+            return new JsonResult(await _generalRepository.GetSingleCarPark(carparkCode));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
     }
 }

@@ -153,11 +153,41 @@ public class DataController : ControllerBase
 
     [HttpGet]
     [Route("GetMallStaticData")]
-    public async Task<ActionResult> GetMallStaticData(GeoPoint geo)
+    public async Task<ActionResult> GetMallStaticData()
     {
         try
         {
             return Ok(await _mallCarparkRepository.GetAllAsync());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest();
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
+    }
+    [HttpGet]
+    [Route("GetHDBStaticData")]
+    public async Task<ActionResult> GetHDBStaticData()
+    {
+        try
+        {
+            return Ok(await _hdbCarparkRepository.GetAllAsync());
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest();
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
+    }
+    [HttpGet]
+    [Route("GetURAStaticData")]
+    public async Task<ActionResult> GetURAStaticData()
+    {
+        try
+        {
+            return Ok(await _uraCarparkRepository.GetAllAsync());
         }
         catch (Exception e)
         {
@@ -193,7 +223,7 @@ public class DataController : ControllerBase
         {
             var coords = new GeoPoint(lat,lon);
             precision = Math.Clamp(precision, 1, 10);
-            return Ok(await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision));
+            return Ok((await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision)));
         }
         catch (Exception e)
         {

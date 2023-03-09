@@ -8,12 +8,12 @@ namespace CZ3002_Backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private readonly IUserRepository _userRepository;
+    private readonly IGeneralRepository _generalRepository;
 
-    public UserController(ILogger<UserController> logger, IUserRepository userRepository)
+    public UserController(ILogger<UserController> logger, IGeneralRepository generalRepository)
     {
         _logger = logger;
-        _userRepository = userRepository;
+        _generalRepository = generalRepository;
     }
 
     [HttpGet]
@@ -22,7 +22,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var result = await _userRepository.GetUserFavouriteCarParks(user);
+            var result = await _generalRepository.GetUserFavouriteCarParks(user);
             return new JsonResult(result);
         }
         catch (Exception e)
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            await _userRepository.UpsertUserFavouriteCarPark(user, carParkCode);
+            await _generalRepository.UpsertUserFavouriteCarPark(user, carParkCode);
             return Ok();
         }
         catch (Exception e)
@@ -54,7 +54,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            await _userRepository.DeleteUserFavouriteCarPark(user, carParkCode);
+            await _generalRepository.DeleteUserFavouriteCarPark(user, carParkCode);
             return Ok();
         }
         catch (Exception e)

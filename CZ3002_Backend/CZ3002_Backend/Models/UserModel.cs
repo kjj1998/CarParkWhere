@@ -1,4 +1,5 @@
-﻿using Google.Cloud.Firestore;
+﻿using System.Text.Json.Serialization;
+using Google.Cloud.Firestore;
 
 namespace CZ3002_Backend.Models;
 
@@ -10,15 +11,19 @@ public class UserModel:IBaseFirestoreDataModel
     public string Name { get; set; }
 
     [FirestoreProperty] 
+    
     public List<string> FavouriteHDBCarParkCodes { get; set; }
-    public List<HdbCarParkModel> FavouriteHDBCarParks { get; set; }
+    [JsonPropertyName("hdb")]
+    public List<HdbCarParkModel> Hdb { get; set; }
     
     [FirestoreProperty] 
     public List<string> FavouriteMallCarParkCodes { get; set; }
-    public List<MallCarparkModel> FavouriteMallCarParks { get; set; }
+    [JsonPropertyName("mall")]
+    public List<MallCarparkModel> Mall { get; set; }
     
     [FirestoreProperty] 
     public List<string> FavouriteURACarParkCodes { get; set; }
-    public List<UraCarparkModel> FavouriteURACarParks { get; set; }
+    [JsonPropertyName("ura")]
+    public List<UraCarparkModel> Ura { get; set; }
 
 }
