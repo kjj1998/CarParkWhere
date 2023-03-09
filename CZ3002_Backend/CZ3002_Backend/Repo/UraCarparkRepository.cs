@@ -39,6 +39,11 @@ public class UraCarparkRepository : IUraCarparkRepository
 
     public async Task<List<UraCarparkModel>> QueryRecordsAsync(Query query) => await _repository.QueryRecordsAsync<UraCarparkModel>(query);
     
+    public async Task<long?> GetTotalNumberOfCarparks() => await _repository.GetTotalCountOfDocuments();
+    
+    public async Task<List<UraCarparkModel>?> GetPaginatedCarparks(int documentsToSkip, int pageSize) => 
+        await _repository.QueryPaginatedRecordsAsync<UraCarparkModel>(documentsToSkip, pageSize);
+    
     public async Task<List<UraCarparkModel>> GetAllNearbyUraCarParkWithCoords(GeoPoint coordinates, int precision = 6)
     {
         //var query = ((BaseRepository<MallCarparkModel>)_repository)._firestoreDb.Collection(Collection.SampleUsers.ToString()).WhereIn(nameof(SampleUserModel.SampleCityModelFrom), cities);

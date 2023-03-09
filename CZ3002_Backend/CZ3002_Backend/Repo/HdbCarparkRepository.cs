@@ -36,7 +36,11 @@ public class HdbCarparkRepository : IHdbCarparkRepository
     public async Task DeleteAsync(HdbCarParkModel entity) => await _repository.DeleteAsync(entity);
 
     public async Task<List<HdbCarParkModel>> QueryRecordsAsync(Query query) => await _repository.QueryRecordsAsync<HdbCarParkModel>(query);
+    public async Task<long?> GetTotalNumberOfCarparks() => await _repository.GetTotalCountOfDocuments();
     
+    public async Task<List<HdbCarParkModel>?> GetPaginatedCarparks(int documentsToSkip, int pageSize) => 
+        await _repository.QueryPaginatedRecordsAsync<HdbCarParkModel>(documentsToSkip, pageSize);
+
     // This is specific to HdbCarPark.
     public async Task<List<HdbCarParkModel>> GetAllNearbyHdbCarParkWithCoords(GeoPoint coordinates, int precision = 6)
     {

@@ -114,6 +114,24 @@ public class BaseRepository<T> : IBaseRepository<T>
         await documentReference.DeleteAsync();
     }
 
+    public async Task<long?> GetTotalCountOfDocuments()
+    {
+        var collectionRef = _firestoreDb.Collection(_collection.ToString());
+        var snapshot = await collectionRef.Count().GetSnapshotAsync();
+
+        return snapshot.Count;
+    }
+
+    public async Task<List<T1>> QueryPaginatedRecordsAsync<T1>(int documentsToSkip, int pageSize) where T1 : IBaseFirestoreDataModel
+    {
+        var collectionRef = _firestoreDb.Collection(_collection.ToString());
+        var id = FieldPath.DocumentId;
+
+        var query = collectionRef.OrderBy(FieldPath.DocumentId).Offset(documentsToSkip).Limit(pageSize);
+
+        return await QueryRecordsAsync<T1>(query);
+    }
+    
     public async Task<List<T1>> QueryRecordsAsync<T1>(Query query) where T1 : IBaseFirestoreDataModel
     {
         var snapshotAsync = await query.GetSnapshotAsync();

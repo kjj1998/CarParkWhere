@@ -14,5 +14,9 @@ public interface IUraCarparkRepository
     Task<UraCarparkModel> UpdateAsync(UraCarparkModel entity);
     Task DeleteAsync(UraCarparkModel entity);
     Task<List<UraCarparkModel>> QueryRecordsAsync(Query query);
+    
+    Task<long?> GetTotalNumberOfCarparks();
+
+    Task<List<UraCarparkModel>?> GetPaginatedCarparks(int documentsToSkip, int pageSize);
     Task<List<UraCarparkModel>> GetAllNearbyUraCarParkWithCoords(GeoPoint coordinates, int precision = 6);
 }

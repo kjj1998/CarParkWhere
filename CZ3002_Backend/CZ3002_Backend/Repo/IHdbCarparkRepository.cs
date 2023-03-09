@@ -15,5 +15,7 @@ public interface IHdbCarparkRepository
     Task<HdbCarParkModel> UpdateAsync(HdbCarParkModel entity);
     Task DeleteAsync(HdbCarParkModel entity);
     Task<List<HdbCarParkModel>> QueryRecordsAsync(Query query);
+    Task<long?> GetTotalNumberOfCarparks();
+    Task<List<HdbCarParkModel>?> GetPaginatedCarparks(int documentsToSkip, int pageSize);
     Task<List<HdbCarParkModel>> GetAllNearbyHdbCarParkWithCoords(GeoPoint coordinates, int precision = 6);
 }
