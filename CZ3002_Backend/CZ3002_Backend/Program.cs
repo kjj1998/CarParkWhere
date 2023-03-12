@@ -26,7 +26,7 @@ builder.Services.AddScoped<IDataSetUpService<UraCarparkModel, UraLiveResult>, Ur
 builder.Services.AddScoped<IUpdateLiveCarparkDataService<MallCarparkModel, LtaLiveCarparkValue>, UpdateLiveMallCarparkDataService>();
 builder.Services.AddScoped<IUpdateLiveCarparkDataService<UraCarparkModel, UraLiveResult>, UpdateLiveUraCarparkDataService>();
 builder.Services.AddScoped<IUpdateLiveCarparkDataService<HdbCarParkModel, GovLiveCarparkDatum>, UpdateLiveHdbCarparkDataService>();
-
+builder.Services.AddScoped<ILiveUpdateService, LiveUpdateService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -53,7 +53,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-RecurringJob.AddOrUpdate<ISampleService>("SampleJobName",x=>x.SampleFunction(),Cron.Hourly);
+RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateMallCarParks",x=>x.MallLiveUpdate(),"*/5 * * * *");//every 5th min
+RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateUraCarParks",x=>x.UraLiveUpdate(),"*/5 * * * *");//every 5th min
+RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateHdbCarParks",x=>x.HdbLiveUpdate(), "*/5 * * * *");//every 5th min
 
 app.Run();
 
