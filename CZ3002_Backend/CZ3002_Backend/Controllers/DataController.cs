@@ -23,7 +23,8 @@ public class DataController : ControllerBase
 
     private const int GoogleBatchWriteLimit = 500;
     private readonly IConfiguration _configuration;
-    
+    private ISolrRepository _hdbSolrRepository;
+
     public DataController(
         ILogger<DataController> logger,
         IConfiguration configuration,
@@ -32,7 +33,8 @@ public class DataController : ControllerBase
         IUraCarparkRepository uraCarparkRepository,
         IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum> hdbDataSetUpService,
         IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue> mallDataSetUpService,
-        IDataSetUpService<UraCarparkModel, UraLiveResult> uraDataSetUpService)
+        IDataSetUpService<UraCarparkModel, UraLiveResult> uraDataSetUpService,
+        ISolrRepository hdbSolrRepository)
     {
         _configuration = configuration;
         _logger = logger;
@@ -41,6 +43,8 @@ public class DataController : ControllerBase
         _hdbCarparkRepository = hdbCarparkRepository;
         _mallCarparkRepository = mallCarparkRepository;
         _uraCarparkRepository = uraCarparkRepository;
+
+        _hdbSolrRepository = hdbSolrRepository;
 
         _hdbDataSetUpService = hdbDataSetUpService;
         _mallDataSetUpService = mallDataSetUpService;
@@ -215,13 +219,14 @@ public class DataController : ControllerBase
         }
         /*GetUserWhereCity(LatLong coordinates)*/
     }
+
     [HttpGet]
     [Route("GetHdbStaticDataFromCoords")]
-    public async Task<ActionResult> GetHdbStaticDataFromCoords(float lat,float lon, int precision)
+    public async Task<ActionResult> GetHdbStaticDataFromCoords(float lat, float lon, int precision)
     {
         try
         {
-            var coords = new GeoPoint(lat,lon);
+            var coords = new GeoPoint(lat, lon);
             precision = Math.Clamp(precision, 1, 10);
             return Ok((await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision)));
         }
@@ -232,6 +237,4 @@ public class DataController : ControllerBase
         }
         /*GetUserWhereCity(LatLong coordinates)*/
     }
-    
-    
 }
