@@ -37,7 +37,7 @@ public class LiveUpdateService : ILiveUpdateService
         var mallCarParks = await _mallCarparkRepository.GetAllAsync();
 
         var request = new HttpRequestMessage(HttpMethod.Get, _configuration["LTA_CARPARK_AVAILABILITY_API"]);
-        request.Headers.Add("AccountKey", _configuration["CarParkWhere:LtaAccountKey"]);
+        request.Headers.Add("AccountKey", _configuration["LtaAccountKey"]);
         request.Headers.Add("accept", "application/json");
 
         var response = await _client.SendAsync(request);
@@ -57,7 +57,7 @@ public class LiveUpdateService : ILiveUpdateService
 
         var token = await GetUraToken();
         var request = new HttpRequestMessage(HttpMethod.Get, _configuration["URA_CARPARK_AVAILABILITY_API"]);
-        request.Headers.Add("AccessKey", _configuration["CarParkWhere:UraAccessKey"]);
+        request.Headers.Add("AccessKey", _configuration["UraAccessKey"]);
         request.Headers.Add((string)"Token", (string?)token);
         request.Headers.Add("User-Agent", "Mozilla/5.0");
 
@@ -88,7 +88,7 @@ public class LiveUpdateService : ILiveUpdateService
     private async Task<string?> GetUraToken()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, _configuration["URA_GET_DAILY_TOKEN"]);
-        request.Headers.Add("AccessKey", _configuration["CarParkWhere:UraAccessKey"]);
+        request.Headers.Add("AccessKey", _configuration["UraAccessKey"]);
         
         var response = await _client.SendAsync(request);
         var results = await response.Content.ReadFromJsonAsync<UraTokenRoot>();
