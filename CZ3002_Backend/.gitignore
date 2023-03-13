@@ -454,3 +454,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 /solr-9.1.1/server/logs/
+/solr-9.1.1/server/tmp/
