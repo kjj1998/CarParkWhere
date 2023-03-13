@@ -36,6 +36,11 @@ builder.Services.AddHangfire(c => c.UseMemoryStorage() );
 builder.Services.AddHangfireServer();
 JobStorage.Current = new MemoryStorage();
 
+builder.Services.AddCors(p => p.AddPolicy("frontend", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,6 +50,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("frontend");
 app.UseHttpsRedirection();
 
 app.UseHangfireDashboard();
