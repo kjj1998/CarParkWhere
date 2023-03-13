@@ -38,7 +38,7 @@ JobStorage.Current = new MemoryStorage();
 
 builder.Services.AddCors(p => p.AddPolicy("frontend", builder =>
 {
-    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
 var app = builder.Build();
