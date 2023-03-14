@@ -16,19 +16,24 @@ public class QueryController : ControllerBase
     private readonly IGeneralRepository _generalRepository;
     private readonly HttpClient _client;
     private ILogger<QueryController> _logger;
+    private ISolrRepository _solrRepository;
 
     public QueryController(
         ILogger<QueryController> logger,
-        IMallCarparkRepository mallCarparkRepository, 
-        IHdbCarparkRepository hdbCarparkRepository, 
+        IMallCarparkRepository mallCarparkRepository,
+        IHdbCarparkRepository hdbCarparkRepository,
         IUraCarparkRepository uraCarparkRepository,
-        IGeneralRepository generalRepository)
+        IGeneralRepository generalRepository,
+        ISolrRepository solrRepository)
     {
         _logger = logger;
+
         _mallCarparkRepository = mallCarparkRepository;
         _hdbCarparkRepository = hdbCarparkRepository;
         _uraCarparkRepository = uraCarparkRepository;
         _generalRepository = generalRepository;
+        _solrRepository = solrRepository;
+
         _client = new HttpClient();
     }
 
@@ -195,6 +200,32 @@ public class QueryController : ControllerBase
         try
         {
             return new JsonResult(await _generalRepository.GetSingleCarPark(carparkCode));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+
+    [HttpGet]
+    [Route("GetPaginatedCarparkData")]
+    public async Task<IActionResult> GetPaginatedCarparkData(int start = 0, int rows = 10, string? searchTerm = null, string? type = null)
+    {
+        try
+        {
+            var fq = "";
+            if (type != null)
+            {
+                fq = "type:" + type;
+            }
+
+            var q = "*:*";
+            if (searchTerm != null)
+            {
+                q = searchTerm;
+            }
+            return new JsonResult(await _solrRepository.Search(q, start, rows, fq));
         }
         catch (Exception e)
         {

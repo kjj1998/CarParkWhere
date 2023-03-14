@@ -16,7 +16,7 @@ builder.Services.AddScoped<IHdbCarparkRepository, HdbCarparkRepository>();
 builder.Services.AddScoped<IMallCarparkRepository, MallCarparkRepository>();
 builder.Services.AddScoped<IUraCarparkRepository, UraCarparkRepository>();
 builder.Services.AddScoped<IGeneralRepository, GeneralRepository>();
-builder.Services.AddScoped<ISolrRepository, HdbSolrRepository>();
+builder.Services.AddScoped<ISolrRepository, SolrRepository>();
 
 // Register static data set up services
 builder.Services.AddScoped<IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum>,HdbCarparkDataSetUpService>();

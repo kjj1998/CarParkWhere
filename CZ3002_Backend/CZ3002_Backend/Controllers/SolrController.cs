@@ -1,6 +1,5 @@
 ﻿using CZ3002_Backend.Models;
 using CZ3002_Backend.Repo;
-using CZ3002_Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CZ3002_Backend.Controllers;
@@ -10,19 +9,12 @@ namespace CZ3002_Backend.Controllers;
 public class SolrController : ControllerBase
 {
     private readonly ILogger<DataController> _logger;
-    private readonly HttpClient _client;
-    
+
     private readonly IHdbCarparkRepository _hdbCarparkRepository;
     private readonly IMallCarparkRepository _mallCarparkRepository;
     private readonly IUraCarparkRepository _uraCarparkRepository;
-    
-    private readonly IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum> _hdbDataSetUpService;
-    private readonly IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue> _mallDataSetUpService;
-    private readonly IDataSetUpService<UraCarparkModel, UraLiveResult> _uraDataSetUpService;
 
-    private const int GoogleBatchWriteLimit = 500;
-    private readonly IConfiguration _configuration;
-    private ISolrRepository _hdbSolrRepository;
+    private readonly ISolrRepository _solrRepository;
 
     public SolrController(
         ILogger<DataController> logger,
@@ -30,39 +22,74 @@ public class SolrController : ControllerBase
         IHdbCarparkRepository hdbCarparkRepository,
         IMallCarparkRepository mallCarparkRepository,
         IUraCarparkRepository uraCarparkRepository,
-        IDataSetUpService<HdbCarParkModel, GovLiveCarparkDatum> hdbDataSetUpService,
-        IDataSetUpService<MallCarparkModel, LtaLiveCarparkValue> mallDataSetUpService,
-        IDataSetUpService<UraCarparkModel, UraLiveResult> uraDataSetUpService,
-        ISolrRepository hdbSolrRepository)
+        ISolrRepository solrRepository)
     {
-        _configuration = configuration;
         _logger = logger;
-        _client = new HttpClient();
-        
+
         _hdbCarparkRepository = hdbCarparkRepository;
         _mallCarparkRepository = mallCarparkRepository;
         _uraCarparkRepository = uraCarparkRepository;
 
-        _hdbSolrRepository = hdbSolrRepository;
-
-        _hdbDataSetUpService = hdbDataSetUpService;
-        _mallDataSetUpService = mallDataSetUpService;
-        _uraDataSetUpService = uraDataSetUpService;
+        _solrRepository = solrRepository;
     }
     
     [HttpGet]
-    [Route("ConfigureHdbDataInSolr")]
-    public async Task<ActionResult> ConfigureHdbDataInSolr()
+    [Route("ConfigureCarparkDataInSolr")]
+    public async Task<ActionResult> ConfigureCarparkDataInSolr()
     {
-        await _hdbSolrRepository.AddField("name", "text_general");
-        await _hdbSolrRepository.AddField("carparkcode", "text_general");
+        await _solrRepository.AddField("name", "text_general");
+        await _solrRepository.AddField("carparkcode", "text_general");
+        await _solrRepository.AddField("type", "text_general");
 
         var copyFieldDestinations = new List<string> { "_text_" };
-        await _hdbSolrRepository.AddCopyField("name", copyFieldDestinations);
-        await _hdbSolrRepository.AddCopyField("carparkcode", copyFieldDestinations);
+        await _solrRepository.AddCopyField("name", copyFieldDestinations);
+        await _solrRepository.AddCopyField("carparkcode", copyFieldDestinations);
 
         return Ok();
     }
-    
-    
+
+    [HttpGet]
+    [Route("IndexDataIntoSolr")]
+    public async Task<ActionResult> IndexDataIntoSolr()
+    {
+        var allHdbCarparks = await _hdbCarparkRepository.GetAllAsync();
+        
+        var hdbSolrCarparks = 
+            allHdbCarparks.Select(carpark => 
+                new CarparkSolrIndex()
+                {
+                    id = carpark.Id, carparkcode = carpark.CarparkCode, name = carpark.Name, type = "HDB"
+                }).ToList();
+
+        var allMallCarparks = await _mallCarparkRepository.GetAllAsync();
+        var mallSolrCarparks = 
+            allMallCarparks.Select(carpark => 
+                new CarparkSolrIndex()
+                {
+                    id = carpark.Id, carparkcode = carpark.CarparkCode, name = carpark.Name, type = "Mall"
+                }).ToList();
+        
+        var allUraCarparks = await _uraCarparkRepository.GetAllAsync();
+        var uraSolrCarparks = 
+            allUraCarparks.Select(carpark => 
+                new CarparkSolrIndex()
+                {
+                    id = carpark.Id, carparkcode = carpark.CarparkCode, name = carpark.Name, type = "URA"
+                }).ToList();
+
+        await _solrRepository.AddMultipleDocs(hdbSolrCarparks);
+        await _solrRepository.AddMultipleDocs(mallSolrCarparks);
+        await _solrRepository.AddMultipleDocs(uraSolrCarparks);
+        
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("DeleteAllDataInSolr")]
+    public async Task<ActionResult> DeleteAllDataInSolr()
+    {
+        await _solrRepository.DeleteAllDocs();
+
+        return Ok();
+    }
 }
