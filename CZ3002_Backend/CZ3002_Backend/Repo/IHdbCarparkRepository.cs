@@ -9,6 +9,7 @@ public interface IHdbCarparkRepository
     BaseRepository<HdbCarParkModel> GetBaseRepository();
     Task<List<HdbCarParkModel>> GetAllAsync();
     Task<HdbCarParkModel> GetAsync(HdbCarParkModel entity);
+    Task<HdbCarParkModel> GetAsync(string id);
     Task<HdbCarParkModel> AddAsync(HdbCarParkModel entity);
     Task<List<HdbCarParkModel>> AddMultipleAsync(List<HdbCarParkModel> listOfEntities);
     Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName);

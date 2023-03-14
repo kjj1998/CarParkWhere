@@ -59,6 +59,21 @@ public class BaseRepository<T> : IBaseRepository<T>
 
         return null;
     }
+    
+    public async Task<object> GetAsyncWithId<T1>(string id) where T1 : IBaseFirestoreDataModel
+    {
+        var documentReference = _firestoreDb.Collection(_collection.ToString()).Document(id);
+        var documentSnapshot = await documentReference.GetSnapshotAsync();
+
+        if (documentSnapshot.Exists)
+        {
+            var baseFirestoreDataModel = documentSnapshot.ConvertTo<T1>();
+            baseFirestoreDataModel.Id = documentSnapshot.Id;
+            return baseFirestoreDataModel;
+        }
+
+        return null;
+    }
 
     public async Task<T1> AddAsync<T1>(T1 entity) where T1 : IBaseFirestoreDataModel
     {

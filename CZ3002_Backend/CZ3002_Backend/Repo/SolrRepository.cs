@@ -65,14 +65,26 @@ public class SolrRepository : ISolrRepository
         await _client.SendAsync(request);
     }
 
-    public async Task<SolrSearchResults> Search(string? term, int start, int rows, string type)
+    public async Task<SolrSearchResults> Search(string? term, int start, int rows, string? type)
     {
+        var fq = "";
+        if (type != null)
+        {
+            fq = "type:" + type;
+        }
+
+        var q = "*:*";
+        if (term != null)
+        {
+            q = term;
+        }
+        
         var solrQuery = new SolrQuery()
         {
-            q = term,
+            q = q,
             start = start,
             rows = rows,
-            fq = type
+            fq = fq
         };
 
         var queryDict = solrQuery.ToDictionary();

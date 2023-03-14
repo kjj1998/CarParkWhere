@@ -106,83 +106,83 @@ public class QueryController : ControllerBase
         }
     }
     
-    [HttpGet]
-    [Route("GetPaginatedHdbCarparkData")]
-    public async Task<ActionResult<PaginatedCarparkModel<HdbCarParkModel>>> GetPaginatedHdbCarparkData(int pageNumber, int pageSize, string? search = null)
-    {
-        try
-        {
-            var totalCountOfCarparks = await _hdbCarparkRepository.GetTotalNumberOfCarparks();
-            var documentsToSkip = pageSize * (pageNumber - 1);
-
-            var carparksReturned = await _hdbCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
-
-            var paginatedCarparks = new PaginatedCarparkModel<HdbCarParkModel>
-            {
-                Carparks = carparksReturned,
-                TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
-            };
-
-            return paginatedCarparks;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.ToString());
-            return BadRequest(e.ToString());
-        }
-    }
-    
-    [HttpGet]
-    [Route("GetPaginatedUraCarparkData")]
-    public async Task<ActionResult<PaginatedCarparkModel<UraCarparkModel>>> GetPaginatedUraCarparkData(int pageNumber, int pageSize, string? search = null)
-    {
-        try
-        {
-            var totalCountOfCarparks = await _uraCarparkRepository.GetTotalNumberOfCarparks();
-            var documentsToSkip = pageSize * (pageNumber - 1);
-
-            var carparksReturned = await _uraCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
-
-            var paginatedCarparks = new PaginatedCarparkModel<UraCarparkModel>
-            {
-                Carparks = carparksReturned,
-                TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
-            };
-
-            return paginatedCarparks;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.ToString());
-            return BadRequest(e.ToString());
-        }
-    }
-    
-    [HttpGet]
-    [Route("GetPaginatedMallCarparkData")]
-    public async Task<ActionResult<PaginatedCarparkModel<MallCarparkModel>>> GetPaginatedMallCarparkData(int pageNumber, int pageSize, string? search = null)
-    {
-        try
-        {
-            var totalCountOfCarparks = await _mallCarparkRepository.GetTotalNumberOfCarparks();
-            var documentsToSkip = pageSize * (pageNumber - 1);
-
-            var carparksReturned = await _mallCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
-
-            var paginatedCarparks = new PaginatedCarparkModel<MallCarparkModel>
-            {
-                Carparks = carparksReturned,
-                TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
-            };
-
-            return paginatedCarparks;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.ToString());
-            return BadRequest(e.ToString());
-        }
-    }
+    // [HttpGet]
+    // [Route("GetPaginatedHdbCarparkData")]
+    // public async Task<ActionResult<PaginatedCarparkModel<HdbCarParkModel>>> GetPaginatedHdbCarparkData(int pageNumber, int pageSize, string? search = null)
+    // {
+    //     try
+    //     {
+    //         var totalCountOfCarparks = await _hdbCarparkRepository.GetTotalNumberOfCarparks();
+    //         var documentsToSkip = pageSize * (pageNumber - 1);
+    //
+    //         var carparksReturned = await _hdbCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
+    //
+    //         var paginatedCarparks = new PaginatedCarparkModel<HdbCarParkModel>
+    //         {
+    //             Carparks = carparksReturned,
+    //             TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
+    //         };
+    //
+    //         return paginatedCarparks;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         _logger.LogError(e.ToString());
+    //         return BadRequest(e.ToString());
+    //     }
+    // }
+    //
+    // [HttpGet]
+    // [Route("GetPaginatedUraCarparkData")]
+    // public async Task<ActionResult<PaginatedCarparkModel<UraCarparkModel>>> GetPaginatedUraCarparkData(int pageNumber, int pageSize, string? search = null)
+    // {
+    //     try
+    //     {
+    //         var totalCountOfCarparks = await _uraCarparkRepository.GetTotalNumberOfCarparks();
+    //         var documentsToSkip = pageSize * (pageNumber - 1);
+    //
+    //         var carparksReturned = await _uraCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
+    //
+    //         var paginatedCarparks = new PaginatedCarparkModel<UraCarparkModel>
+    //         {
+    //             Carparks = carparksReturned,
+    //             TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
+    //         };
+    //
+    //         return paginatedCarparks;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         _logger.LogError(e.ToString());
+    //         return BadRequest(e.ToString());
+    //     }
+    // }
+    //
+    // [HttpGet]
+    // [Route("GetPaginatedMallCarparkData")]
+    // public async Task<ActionResult<PaginatedCarparkModel<MallCarparkModel>>> GetPaginatedMallCarparkData(int pageNumber, int pageSize, string? search = null)
+    // {
+    //     try
+    //     {
+    //         var totalCountOfCarparks = await _mallCarparkRepository.GetTotalNumberOfCarparks();
+    //         var documentsToSkip = pageSize * (pageNumber - 1);
+    //
+    //         var carparksReturned = await _mallCarparkRepository.GetPaginatedCarparks(documentsToSkip, pageSize);
+    //
+    //         var paginatedCarparks = new PaginatedCarparkModel<MallCarparkModel>
+    //         {
+    //             Carparks = carparksReturned,
+    //             TotalNumOfCarparks = totalCountOfCarparks == null ? 0 : (int) totalCountOfCarparks
+    //         };
+    //
+    //         return paginatedCarparks;
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         _logger.LogError(e.ToString());
+    //         return BadRequest(e.ToString());
+    //     }
+    // }
     
     private async Task<OneMapSearchRootModel?> OneMapLocationSearch(string location)
     {
@@ -209,23 +209,42 @@ public class QueryController : ControllerBase
     }
 
     [HttpGet]
+    [Route("GetSingleCarparkInfo")]
+    public async Task<IActionResult?> GetSingleCarparkInfo(string id, string type)
+    {
+        try
+        {
+            if (type == "HDB")
+            {
+                return new JsonResult(await _hdbCarparkRepository.GetAsync(id));
+            }
+
+            if (type == "URA")
+            {
+                return new JsonResult(await _uraCarparkRepository.GetAsync(id));
+            }
+            
+            if (type == "Mall")
+            {
+                return new JsonResult(await _mallCarparkRepository.GetAsync(id));
+            }
+
+            return null;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+
+    [HttpGet]
     [Route("GetPaginatedCarparkData")]
     public async Task<IActionResult> GetPaginatedCarparkData(int start = 0, int rows = 10, string? searchTerm = null, string? type = null)
     {
         try
         {
-            var fq = "";
-            if (type != null)
-            {
-                fq = "type:" + type;
-            }
-
-            var q = "*:*";
-            if (searchTerm != null)
-            {
-                q = searchTerm;
-            }
-            return new JsonResult(await _solrRepository.Search(q, start, rows, fq));
+            return new JsonResult(await _solrRepository.Search(searchTerm, start, rows, type));
         }
         catch (Exception e)
         {

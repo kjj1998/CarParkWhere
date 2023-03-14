@@ -8,6 +8,7 @@ public interface IUraCarparkRepository
     BaseRepository<UraCarparkModel> GetBaseRepository();
     Task<List<UraCarparkModel>> GetAllAsync();
     Task<UraCarparkModel> GetAsync(UraCarparkModel entity);
+    Task<UraCarparkModel> GetAsync(string id);
     Task<UraCarparkModel> AddAsync(UraCarparkModel entity);
     Task<List<UraCarparkModel>> AddMultipleAsync(List<UraCarparkModel> listOfEntities);
     Task<List<Lots>> UpdateMultipleAsync(List<Lots> listOfEntities, List<string> docReferences, string fieldName);

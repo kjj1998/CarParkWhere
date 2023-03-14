@@ -8,6 +8,7 @@ public interface IBaseRepository<T>
     Task<List<T>> GetAllAsync<T>() where T : IBaseFirestoreDataModel;
 
     Task<object> GetAsync<T>(T entity) where T : IBaseFirestoreDataModel;
+    Task<object> GetAsyncWithId<T1>(string id) where T1 : IBaseFirestoreDataModel;
 
     Task<T> AddAsync<T>(T entity) where T : IBaseFirestoreDataModel;
 

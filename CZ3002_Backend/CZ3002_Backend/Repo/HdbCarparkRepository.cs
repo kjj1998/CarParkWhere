@@ -23,6 +23,8 @@ public class HdbCarparkRepository : IHdbCarparkRepository
 
     public async Task<HdbCarParkModel> GetAsync(HdbCarParkModel entity) => (HdbCarParkModel) await _repository.GetAsync(entity);
 
+    public async Task<HdbCarParkModel> GetAsync(string id) => (HdbCarParkModel) await _repository.GetAsyncWithId<HdbCarParkModel>(id);
+
     public async Task<HdbCarParkModel> AddAsync(HdbCarParkModel entity) => await _repository.AddAsync(entity);
 
     public async Task<List<HdbCarParkModel>> AddMultipleAsync(List<HdbCarParkModel> listOfEntities) =>

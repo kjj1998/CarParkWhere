@@ -23,6 +23,9 @@ public class MallCarparkRepository : IMallCarparkRepository
 
     public async Task<MallCarparkModel> GetAsync(MallCarparkModel entity) => (MallCarparkModel) await _repository.GetAsync(entity);
 
+    public async Task<MallCarparkModel> GetAsync(string id) =>
+        (MallCarparkModel)await _repository.GetAsyncWithId<MallCarparkModel>(id);
+
     public async Task<MallCarparkModel> AddAsync(MallCarparkModel entity) => await _repository.AddAsync(entity);
 
     public async Task<List<MallCarparkModel>> AddMultipleAsync(List<MallCarparkModel> listOfEntities) =>

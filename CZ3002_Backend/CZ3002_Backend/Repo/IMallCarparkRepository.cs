@@ -8,6 +8,7 @@ public interface IMallCarparkRepository
     BaseRepository<MallCarparkModel> GetBaseRepository();
     Task<List<MallCarparkModel>> GetAllAsync();
     Task<MallCarparkModel> GetAsync(MallCarparkModel entity);
+    Task<MallCarparkModel> GetAsync(string id);
     Task<MallCarparkModel> AddAsync(MallCarparkModel entity);
     Task<List<MallCarparkModel>> AddMultipleAsync(List<MallCarparkModel> listOfEntities);
     Task<MallCarparkModel> UpdateAsync(MallCarparkModel entity);

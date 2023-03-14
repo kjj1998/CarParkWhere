@@ -23,6 +23,9 @@ public class UraCarparkRepository : IUraCarparkRepository
 
     public async Task<UraCarparkModel> GetAsync(UraCarparkModel entity) => (UraCarparkModel) await _repository.GetAsync(entity);
 
+    public async Task<UraCarparkModel> GetAsync(string id) =>
+        (UraCarparkModel) await _repository.GetAsyncWithId<UraCarparkModel>(id);
+
     public async Task<UraCarparkModel> AddAsync(UraCarparkModel entity) => await _repository.AddAsync(entity);
 
     public async Task<List<UraCarparkModel>> AddMultipleAsync(List<UraCarparkModel> listOfEntities) =>
