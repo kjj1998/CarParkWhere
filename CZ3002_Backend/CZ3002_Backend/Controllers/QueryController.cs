@@ -39,7 +39,7 @@ public class QueryController : ControllerBase
 
     [HttpPost]
     [Route("GetCarparkDataBasedOnCurrentLocation")]
-    public async Task<ActionResult<FrontendCarparkModel>> GetCarparkDataBasedOnCurrentLocation(LatLong currentLocation)
+    public async Task<ActionResult<FrontendCarparkModel>> PostCarparkDataBasedOnCurrentLocation(LatLong currentLocation)
     {
         try
         {
@@ -56,6 +56,37 @@ public class QueryController : ControllerBase
                 nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks, currentLocation);
 
             return frontendCarparkModel;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+    
+    [HttpGet]
+    [Route("GetCarparkDataBasedOnCurrentLocation")]
+    public async Task<IActionResult> GetCarparkDataBasedOnCurrentLocation(double latitude, double longitude, int precision = 6)
+    {
+        try
+        {
+            var geoPointOfCurrentLocation = new GeoPoint(latitude, longitude);
+
+            var nearbyMallCarparks =
+                await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(geoPointOfCurrentLocation, precision);
+            var nearbyHdbCarparks =
+                await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(geoPointOfCurrentLocation, precision);
+            var nearbyUraCarparks =
+                await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(geoPointOfCurrentLocation, precision);
+
+            var frontendCarparkModel = new FrontendCarparkModel(
+                nearbyMallCarparks, nearbyHdbCarparks, nearbyUraCarparks, new LatLong()
+                {
+                    latitude = latitude,
+                    longitude = longitude
+                });
+
+            return new JsonResult(frontendCarparkModel);
         }
         catch (Exception e)
         {
@@ -199,7 +230,7 @@ public class QueryController : ControllerBase
     {
         try
         {
-            return new JsonResult(await _generalRepository.GetSingleCarPark(carparkCode));
+            return new JsonResult(await _generalRepository.GetSingleCarPark(carparkCode.ToUpper()));
         }
         catch (Exception e)
         {
