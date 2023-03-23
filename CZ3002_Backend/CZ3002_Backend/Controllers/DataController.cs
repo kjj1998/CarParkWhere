@@ -204,13 +204,13 @@ public class DataController : ControllerBase
     
     [HttpGet]
     [Route("GetMallStaticDataFromCoords")]
-    public async Task<ActionResult> GetMallStaticDataFromCoords(float lat,float lon, int precision)
+    public async Task<IActionResult> GetMallStaticDataFromCoords(double lat, double lon, int precision)
     {
         try
         {
             var coords = new GeoPoint(lat,lon);
             precision = Math.Clamp(precision, 1, 10);
-            return Ok(await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(coords, precision));
+            return new JsonResult(await _mallCarparkRepository.GetAllNearbyMallCarParkWithCoords(coords, precision));
         }
         catch (Exception e)
         {
@@ -222,13 +222,31 @@ public class DataController : ControllerBase
 
     [HttpGet]
     [Route("GetHdbStaticDataFromCoords")]
-    public async Task<ActionResult> GetHdbStaticDataFromCoords(float lat, float lon, int precision)
+    public async Task<IActionResult> GetHdbStaticDataFromCoords(double lat, double lon, int precision)
     {
         try
         {
             var coords = new GeoPoint(lat, lon);
             precision = Math.Clamp(precision, 1, 10);
-            return Ok((await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision)));
+            return new JsonResult((await _hdbCarparkRepository.GetAllNearbyHdbCarParkWithCoords(coords, precision)));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            return BadRequest(e.ToString());
+        }
+        /*GetUserWhereCity(LatLong coordinates)*/
+    }
+    
+    [HttpGet]
+    [Route("GetUraStaticDataFromCoords")]
+    public async Task<IActionResult> GetUraStaticDataFromCoords(double lat, double lon, int precision)
+    {
+        try
+        {
+            var coords = new GeoPoint(lat, lon);
+            precision = Math.Clamp(precision, 1, 10);
+            return new JsonResult((await _uraCarparkRepository.GetAllNearbyUraCarParkWithCoords(coords, precision)));
         }
         catch (Exception e)
         {
