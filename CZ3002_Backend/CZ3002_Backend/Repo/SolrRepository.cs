@@ -10,12 +10,13 @@ public class SolrRepository : ISolrRepository
 {
     private readonly HttpClient _client;
     private readonly IConfiguration _configuration;
-    private readonly string _coreName = "carparks3";
+    private readonly string _coreName;
 
     public SolrRepository(IConfiguration configuration)
     {
         _client = new HttpClient();
         _configuration = configuration;
+        _coreName = _configuration["SOLR_CORE_NAME"];
     }
 
     public async Task AddField(string name, string type)
