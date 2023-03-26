@@ -60,9 +60,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateMallCarParks",x=>x.MallLiveUpdate(),"*/5 * * * *");//every 5th min
-RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateUraCarParks",x=>x.UraLiveUpdate(),"*/5 * * * *");//every 5th min
-RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateHdbCarParks",x=>x.HdbLiveUpdate(), "*/5 * * * *");//every 5th min
+// RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateMallCarParks",x=>x.MallLiveUpdate(),"*/5 * * * *");//every 5th min
+// RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateUraCarParks",x=>x.UraLiveUpdate(),"*/5 * * * *");//every 5th min
+// RecurringJob.AddOrUpdate<ILiveUpdateService>("UpdateHdbCarParks",x=>x.HdbLiveUpdate(), "*/5 * * * *");//every 5th min
 
 app.Run();
 
