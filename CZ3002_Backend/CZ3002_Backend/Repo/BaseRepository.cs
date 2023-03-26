@@ -15,10 +15,11 @@ public class BaseRepository<T> : IBaseRepository<T>
         _collection = collection;
         _configuration = configuration;
         var filepath = _configuration["GOOGLE_APPLICATION_CREDENTIALS"];
+        var dbName = _configuration["GOOGLE_FIRESTORE_NAME"];
         // Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "../CZ3002_Backend/Firebase/carparkwhere-c0ef4-firebase-adminsdk-nvb67-95324885d1.json");
         // _firestoreDb = FirestoreDb.Create("carparkwhere-c0ef4");
         Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", filepath);
-        _firestoreDb = FirestoreDb.Create("carparkwhere2");
+        _firestoreDb = FirestoreDb.Create(dbName);
         
     }
     public async Task<List<T1>> GetAllAsync<T1>() where T1 : IBaseFirestoreDataModel
