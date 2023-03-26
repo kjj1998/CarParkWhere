@@ -10,7 +10,7 @@ public class SolrRepository : ISolrRepository
 {
     private readonly HttpClient _client;
     private readonly IConfiguration _configuration;
-    private readonly string _coreName = "carparks2";
+    private readonly string _coreName = "carparks3";
 
     public SolrRepository(IConfiguration configuration)
     {
