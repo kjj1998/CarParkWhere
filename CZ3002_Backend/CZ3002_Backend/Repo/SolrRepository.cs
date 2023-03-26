@@ -10,6 +10,7 @@ public class SolrRepository : ISolrRepository
 {
     private readonly HttpClient _client;
     private readonly IConfiguration _configuration;
+    private readonly string _coreName = "carparks2";
 
     public SolrRepository(IConfiguration configuration)
     {
@@ -28,7 +29,7 @@ public class SolrRepository : ISolrRepository
             }
         };
         
-        var uri = _configuration["SOLR_CORE"] + "carparks/schema";
+        var uri = _configuration["SOLR_CORE"] + _coreName + "/schema";
         var content = JsonContent.Create(solrAddFieldRoot); 
         var request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = content;
@@ -47,7 +48,7 @@ public class SolrRepository : ISolrRepository
             }
         };
         
-        var uri = _configuration["SOLR_CORE"] + "carparks/schema";
+        var uri = _configuration["SOLR_CORE"] + _coreName +"/schema";
         var content = JsonContent.Create(solrAddCopyFieldRoot);
         var request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = content;
@@ -57,7 +58,7 @@ public class SolrRepository : ISolrRepository
 
     public async Task AddMultipleDocs(List<CarparkSolrIndex> carparkSolrIndices)
     {
-        var uri = _configuration["SOLR_CORE"] + "carparks/update/json/docs?commit=true";
+        var uri = _configuration["SOLR_CORE"] + _coreName +"/update/json/docs?commit=true";
         var content = JsonContent.Create(carparkSolrIndices);
         var request = new HttpRequestMessage(HttpMethod.Post, uri);
         request.Content = content;
@@ -90,7 +91,7 @@ public class SolrRepository : ISolrRepository
         var queryDict = solrQuery.ToDictionary();
         
         var requestUri = 
-            QueryHelpers.AddQueryString(_configuration["SOLR_CORE"] + "carparks/select?", queryDict!);
+            QueryHelpers.AddQueryString(_configuration["SOLR_CORE"] + _coreName +"/select?", queryDict!);
         var response = await _client.GetAsync(requestUri);
         
         var responseBody = await response.Content.ReadFromJsonAsync<SolrResponseRoot>();
@@ -109,7 +110,7 @@ public class SolrRepository : ISolrRepository
     public async Task DeleteAllDocs()
     {
         var client = new HttpClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, _configuration["SOLR_CORE"] + "carparks/update?commit=true");
+        var request = new HttpRequestMessage(HttpMethod.Post, _configuration["SOLR_CORE"] + _coreName +"/update?commit=true");
         var content = new StringContent("{\r\n    \"delete\": {\r\n        \"query\": \"*:*\"\r\n    }\r\n}", null, "application/json");
         request.Content = content;
         await client.SendAsync(request);
